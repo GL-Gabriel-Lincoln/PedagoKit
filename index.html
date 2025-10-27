@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ferramentas para Professores — Pacote Pedagógico (MVP)</title>
+  
+  <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+
+<header>
+  <h1>Ferramentas para Professores</h1>
+  <p>Um pacote de ferramentas pedagógicas para auxiliar na gestão e análise da aula.</p>
+</header>
+
+<nav>
+  <a class="nav__link" href="#groups">1. Diagnosticar Turma</a>
+  <a class="nav__link" href="#lesson-planner">2. Planejar Aula (5E)</a>
+  <a class="nav__link" href="#question-leveler">3. Nivelar Perguntas (Bloom)</a>
+  <a class="nav__link" href="#mvp">Sobre o MVP</a>
+</nav>
+
+<div class="container">
+
+  <section id="groups" class="tool-section">
+    <h2>Ferramenta 1: Gerador de Grupos & Análise de Impacto</h2>
+    
+    <div class="tool-section__card">
+      <div class="row">
+        <div class="col">
+          <label for="inputStudents"><strong>Importar / Colar lista</strong></label>
+          <textarea id="inputStudents" placeholder="Ex: João,7.5,9,8&#10;Maria,6,7.5,8" aria-describedby="student-list-info"></textarea>
+          <div id="student-actions" class="tool-section__actions">
+            <input type="file" id="fileImport" accept=".csv" />
+            <button id="btnPasteSample" class="btn btn--secondary">Exemplo</button>
+            <button id="btnSaveList" class="btn btn--secondary">Salvar</button>
+            <button id="btnLoadList" class="btn btn--secondary">Carregar</button>
+            <button id="btnClearList" class="btn btn--secondary">Limpar</button>
+          </div>
+          <small id="student-list-info">Formato: <code>Nome,nota1,nota2,...</code> — separadores por vírgula.</small>
+        </div>
+
+        <div class="col">
+          <label for="mode"><strong>Configurações de agrupamento</strong></label>
+          <div style="margin-top:6px">
+            <label for="mode">Modo:</label>
+            <select id="mode">
+              <option value="numGroups">Número de grupos</option>
+              <option value="groupSize">Tamanho do grupo</option>
+            </select>
+            <label for="value" class="sr-only">Valor para o modo (oculto)</label>
+            <input type="number" id="value" min="1" value="3" style="width:120px;margin-left:8px" />
+          </div>
+
+          <div style="margin-top:8px">
+            <label for="balanceMode">Modo de balanceamento:</label>
+            <select id="balanceMode">
+              <option value="tiers">Balanceado (Otimizado)</option>
+              <option value="random">Aleatório</option>
+            </select>
+          </div>
+          
+          <div class="tool-section__actions">
+            <button id="btnGenerate" class="btn">Gerar Grupos & Analisar</button>
+            <button id="btnExportCSV" class="btn btn--secondary">Exportar Grupos</button>
+            <button id="btnExportSave" class="btn btn--secondary">Exportar Lista</button>
+          </div>
+
+          <div id="statsArea" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="resultArea" class="tool-section__card tool-section__card--top-divider" aria-live="polite">
+      </div>
+
+    <div class="tool-section__card tool-section__card--top-divider">
+      <h3 class="result-heading">Análise da Turma & Plano de Ação</h3>
+      <div id="performanceResult" aria-live="polite">
+        Nenhuma análise ainda. Gere grupos ou carregue uma lista.
+      </div>
+    </div>
+
+  </section>
+  
+  <section id="lesson-planner" class="tool-section">
+    <h2>Ferramenta 2: Estruturador de Aula (Modelo 5E)</h2>
+    <p>Planeje o tempo da sua aula. Insira a duração, tópico, objetivo e escolha o foco pedagógico.</p>
+    <div class="tool-section__card">
+      <div class="row">
+        <div class="col">
+          <label for="plannerTime">1. Duração total da aula (em minutos):</label>
+          <input type="number" id="plannerTime" value="50" min="10" max="180">
+          
+          <label for="plannerTopic" style="margin-top: 16px;">2. Tópico da Aula:</label>
+          <input type="text" id="plannerTopic" placeholder="Ex: Fotossíntese">
+          
+          <label for="plannerObjective" style="margin-top: 16px;">3. Objetivo da Aula (O que o aluno deve saber?):</label>
+          <input type="text" id="plannerObjective" placeholder="Ex: Descrever o processo em suas palavras">
+          
+          <fieldset style="margin-top: 16px;">
+            <legend>4. Escolha o Foco da Aula:</legend>
+            <div class="tool-section__actions" id="planner-actions">
+              <button id="btnPlannerNew" class="btn">Matéria Nova</button>
+              <button id="btnPlannerPractice" class="btn btn--secondary">Revisão/Prática</button>
+              <button id="btnPlannerAssess" class="btn btn--secondary">Dia de Avaliação</button>
+            </div>
+          </fieldset>
+        </div>
+        <div class="col">
+          <label for="plannerResult">Estrutura Sugerida:</label>
+          <ul id="plannerResult" class="result-list" aria-live="polite">
+             <li style="padding: 4px 0;">Preencha os dados e escolha o foco da aula.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="question-leveler" class="tool-section">
+    <h2>Ferramenta 3: Nivelador de Perguntas (Taxonomia de Bloom)</h2>
+    <p>Insira o tópico, um contexto (opcional) e escolha o objetivo cognitivo para gerar perguntas diferenciadas.</p>
+    <div class="tool-section__card">
+      <div class="row">
+        <div class="col">
+           <label for="questionTopic">1. Insira o tópico da aula:</label>
+          <input type="text" id="questionTopic" placeholder="Ex: Frações">
+          
+          <label for="questionContext" style="margin-top: 16px;">2. Contexto de Aplicação (Opcional):</label>
+          <input type="text" id="questionContext" placeholder="Ex: Receita de bolo, dividir uma pizza, dinheiro">
+          
+          <fieldset style="margin-top: 16px;">
+            <legend>3. Escolha o Objetivo Cognitivo:</legend>
+             <div class="tool-section__actions" id="question-actions">
+              <button id="btnQuestionLow" class="btn btn--secondary">Checagem Rápida</button>
+              <button id="btnQuestionMedium" class="btn">Gerar Discussão</button>
+              <button id="btnQuestionHigh" class="btn btn--secondary">Criar Desafio</button>
+            </div>
+          </fieldset>
+        </div>
+        <div class="col">
+          <label for="questionResult">Perguntas para Diferenciação:</label>
+           <ul id="questionResult" class="result-list" aria-live="polite">
+             <li style="padding: 4px 0;">Aguardando tópico e objetivo...</li>
+           </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mvp" class="tool-section">
+    <h2>MVP, Benchmark e Próximos Passos</h2>
+    <div class="tool-section__card">
+      <p class="callout callout--info"><strong>MVP recomendado:</strong> importar listas (CSV/cola), gerar grupos balanceados por histórico, export CSV, salvar turmas no localStorage, mostrar estatísticas básicas (média da turma, desvio padrão), e permitir salvar histórico de grupos para análise posterior.</p>
+
+      <ul>
+        <li>Inspiração / concorrentes: Google Classroom, ClassDojo, Classroomscreen (Group-maker), Grouper.school, CleverGroups — observe funcionalidades como salvar turmas, múltiplos atributos (gênero, preferências), integração com LMS e histórico de grupos para avaliação do impacto pedagógico.</li>
+        <li>Próximos passos técnicos: backend (Node/Nest), autenticação de professores, integração com Google Classroom API para importar turmas, dashboards com gráficos (Chart.js), e testes com professores para validar hipóteses.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>© 2025 — Projeto: Ferramentas para Professores — Pacote Pedagógico (MVP)</p>
+</footer>
+
+<script>
+/* ---------- util: parse CSV / texto ---------- */
+function parseStudents(raw){
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const students = [];
+  for(const line of lines){
+    // aceitar separadores , ; \t
+    const parts = line.split(/[,;\t]+/).map(p => p.trim()).filter(Boolean);
+    if(parts.length < 2) continue;
+    const name = parts[0];
+    // Modificado para aceitar notas faltantes como NaN, mas manter a estrutura
+    const grades = parts.slice(1).map(s => {
+      const normalized = s.replace(',', '.');
+      const v = parseFloat(normalized);
+      return v; // Não filtra o NaN aqui, deixa a análise lidar com isso
+    });
+    // Agora filtramos NaN para o cálculo da média, mas o array original pode ter comprimentos diferentes
+    const validGrades = grades.filter(g => !isNaN(g));
+    if(validGrades.length === 0) continue; // Pula se não tiver nenhuma nota válida
+    
+    const avg = validGrades.reduce((a,b)=>a+b,0)/validGrades.length;
+    students.push({name, grades, avg: Math.round(avg*100)/100});
+  }
+  return students;
+}
+
+/* ---------- estatísticas ---------- */
+// A função 'mean' é robusta o suficiente, pois o array de entrada será filtrado antes
+function mean(arr){ 
+  const validArr = arr.filter(g => g !== null && !isNaN(g));
+  if (validArr.length === 0) return 0;
+  return validArr.reduce((a,b)=>a+b,0)/validArr.length; 
+}
+function stddev(arr){
+  const validArr = arr.filter(g => g !== null && !isNaN(g));
+  if (validArr.length < 2) return 0; // Desvio padrão de 0 ou 1 item não é significativo
+  const m = mean(validArr);
+  const v = validArr.reduce((s,x)=>s + (x-m)*(x-m), 0)/validArr.length;
+  return Math.sqrt(v);
+}
+
+/* ---------- gerar grupos balanceados (VERSÃO OTIMIZADA) ---------- */
+function generateGroupsBalanced(students, opts = {}){
+  const n = students.length;
+  if(n === 0) return {groups:[], stats:{}};
+  let k = 1;
+  if(opts.mode === 'groupSize'){
+    const groupSize = Math.max(1, Math.floor(opts.value));
+    k = Math.max(1, Math.ceil(n / groupSize));
+  } else {
+    k = Math.max(1, Math.floor(opts.value));
+  }
+
+  const arr = students.map(s => ({...s}));
+  
+  if(opts.balanceMode === 'random'){
+    arr.sort(()=>Math.random()-0.5);
+    const groupsR = Array.from({length:k}, ()=>[]);
+    for(let i=0;i<arr.length;i++){ groupsR[i % k].push(arr[i]); }
+    return {groups: groupsR, stats: computeStats(arr, k)};
+  }
+
+  // MÉTODO OTIMIZADO (Greedy)
+  arr.sort((a,b)=>b.avg - a.avg);
+  const groups = Array.from({length:k}, ()=>[]);
+  const groupSums = Array.from({length:k}, ()=>0); 
+
+  for(const student of arr) {
+    let minSum = Infinity;
+    let minIdx = 0;
+    for (let i = 0; i < groupSums.length; i++) {
+      if (groupSums[i] < minSum) {
+        minSum = groupSums[i];
+        minIdx = i;
+      }
+    }
+    groups[minIdx].push(student);
+    groupSums[minIdx] += student.avg;
+  }
+  return {groups, stats: computeStats(arr, k)};
+}
+
+function computeStats(arr, k){
+  const averages = arr.map(a=>a.avg);
+  const classMean = Math.round(mean(averages)*100)/100;
+  const classStd = Math.round(stddev(averages)*100)/100;
+  return {classMean, classStd, totalStudents: arr.length, groups: k};
+}
+
+/* ---------- UI handlers (Ferramenta 1) ---------- */
+const input = document.getElementById('inputStudents');
+const fileImport = document.getElementById('fileImport');
+const btnGenerate = document.getElementById('btnGenerate');
+const resultArea = document.getElementById('resultArea');
+const statsArea = document.getElementById('statsArea');
+const performanceResult = document.getElementById('performanceResult');
+const btnExportCSV = document.getElementById('btnExportCSV');
+const btnExportSave = document.getElementById('btnExportSave');
+const btnSaveList = document.getElementById('btnSaveList');
+const btnLoadList = document.getElementById('btnLoadList');
+const btnClearList = document.getElementById('btnClearList');
+const btnPasteSample = document.getElementById('btnPasteSample');
+
+fileImport.addEventListener('change', (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    input.value = reader.result;
+  };
+  reader.readAsText(f,'UTF-8');
+});
+
+btnPasteSample.addEventListener('click', ()=> {
+  input.value = [
+    'João,8.5,7.5,9', // Média 8.33
+    'Maria,6.0,7.0,6.5', // Média 6.5
+    'Carlos,5.0,4.5,1', // Média 3.5 (Falha crítica na Av3)
+    'Ana,9.0,8.5,9.5', // Média 9.0
+    'Paulo,7.0,7.5,7.0', // Média 7.17
+    'Luiza,6.5,6.0,6.0', // Média 6.17
+    'Rita,8.0,7.5,8.0', // Média 7.83
+    'Ricardo,4.0,5.0,3.0', // Média 4.0 (Falha crítica na Av3)
+    'Fernanda,9.5,9,10', // Média 9.5
+    'Mateus,6.0,5.5,2.0' // Média 4.5 (Falha crítica na Av3)
+  ].join('\n');
+});
+
+btnSaveList.addEventListener('click', ()=>{
+  localStorage.setItem('teacher_stud_list', input.value);
+  alert('Lista salva localmente no navegador.');
+});
+btnLoadList.addEventListener('click', ()=>{
+  const v = localStorage.getItem('teacher_stud_list') || '';
+  input.value = v;
+  alert(v ? 'Lista carregada.' : 'Nenhuma lista encontrada.');
+});
+
+// O JS aqui ainda funciona porque seleciona pelo ID
+btnClearList.addEventListener('click', ()=>{
+  if(confirm('Limpar área de entrada e resultados?')) {
+    input.value = '';
+    resultArea.innerHTML = ''; // Limpa os grupos gerados
+    statsArea.innerHTML = ''; // Limpa as estatísticas da turma
+    // Reseta a área de performance para o estado inicial
+    performanceResult.innerHTML = 'Nenhuma análise ainda. Gere grupos ou carregue uma lista.';
+  }
+});
+
+btnGenerate.addEventListener('click', ()=>{
+  const raw = input.value;
+  const students = parseStudents(raw);
+  if(students.length === 0) {
+    alert('Nenhum aluno válido encontrado. Verifique o formato.');
+    return;
+  }
+  const mode = document.getElementById('mode').value;
+  const value = parseInt(document.getElementById('value').value,10) || 1;
+  const balanceMode = document.getElementById('balanceMode').value;
+  const {groups, stats} = generateGroupsBalanced(students, {mode, value, balanceMode});
+  renderGroups(groups, stats);
+  renderPerformance(students, stats);
+});
+
+function renderGroups(groups, stats){
+  // Usa a nova classe de CSS
+  resultArea.innerHTML = `<h3 class="result-heading">Resultado — ${stats.groups} grupos / ${stats.totalStudents} alunos</h3>`;
+  statsArea.innerHTML = `<div><strong>Média da turma:</strong> ${stats.classMean} &nbsp; <strong>Desvio:</strong> ${stats.classStd}</div>`;
+  const grid = document.createElement('div');
+  grid.className = 'groups-grid';
+  groups.forEach((g,i)=>{
+    const card = document.createElement('div');
+    card.className = 'group-card';
+    const avg = g.length ? (Math.round((g.reduce((s,x)=>s+x.avg,0)/g.length)*100)/100) : '-';
+    let html = `<strong>Grupo ${i+1} (${g.length} al.) — média: ${avg}</strong><hr>`;
+    
+    // *** Adiciona pílulas de notas aos cards de grupo ***
+    html += g.map(s => {
+      const gradesHTML = s.grades.map(g => {
+        const grade = isNaN(g) ? '-' : g;
+        // Usando a mesma classe, mas um pouco menor com style inline
+        return `<span class="grade-pill" style="font-size: 0.8rem; padding: 1px 4px; min-width: 25px;">${grade}</span>`;
+      }).join(' ');
+      
+      return `<div>${s.name} — <strong>${s.avg}</strong> <small style="display: block; margin-top: 2px;">${gradesHTML}</small></div>`;
+    }).join('');
+    
+    card.innerHTML = html;
+    grid.appendChild(card);
+  });
+  resultArea.appendChild(grid);
+}
+
+
+// ***** Esta função é a análise avançada da Ferramenta 1 *****
+function renderPerformance(students, stats){
+  
+  // --- Bloco de Análise de Prioridade (Individual) ---
+  const priorityCount = 3; // Mostrar os 3 alunos com menor nota
+  const sortedByLowest = students.slice().sort((a,b) => a.avg - b.avg);
+  const priorities = sortedByLowest.slice(0, priorityCount);
+  
+  // *** Cria pílulas de notas para a lista de prioridade ***
+  const priorityListHTML = priorities.map(s => {
+    const gradesHTML = s.grades.map(g => {
+        const grade = isNaN(g) ? '-' : g;
+        // Usando a mesma classe, mas um pouco menor com style inline
+        return `<span class="grade-pill" style="font-size: 0.8rem; padding: 1px 4px; min-width: 25px;">${grade}</span>`;
+    }).join(' ');
+    
+    return `<li style="margin-bottom: 8px;">
+              <strong>${s.name}</strong> (Média: ${s.avg})
+              <div style="margin-top: 4px;">${gradesHTML}</div>
+            </li>`;
+  }).join('');
+
+  // Média geral do grupo prioritário
+  const priorityOverallMean = Math.round(mean(priorities.map(s => s.avg))*100)/100;
+  
+  // --- Bloco de Análise por Avaliação ---
+  let analysisHTML = '';
+  // Descobre o número máximo de avaliações que qualquer aluno tem
+  const numAssessments = Math.max(...students.map(s => s.grades.length));
+
+  if (numAssessments === 0) {
+    analysisHTML = "<p>Não foi possível analisar as avaliações individuais.</p>";
+  } else {
+    
+    // 1. Calcular a média da *turma inteira* para cada avaliação
+    const classAssessmentAverages = [];
+    for (let i = 0; i < numAssessments; i++) {
+      const gradesForThis = students.map(s => s.grades[i]); // Pega a nota no índice i
+      classAssessmentAverages.push({ 
+        index: i, 
+        avg: Math.round(mean(gradesForThis) * 100) / 100 
+      });
+    }
+    
+    // 2. Calcular a média do *grupo prioritário* para cada avaliação
+    const priorityAssessmentAverages = [];
+    for (let i = 0; i < numAssessments; i++) {
+      const gradesForThis = priorities.map(s => s.grades[i]); // Pega a nota no índice i
+      priorityAssessmentAverages.push({ 
+        index: i, 
+        avg: Math.round(mean(gradesForThis) * 100) / 100 
+      });
+    }
+
+    // 3. Encontrar a avaliação mais difícil PARA O GRUPO PRIORITÁRIO
+    const priorityWeakest = priorityAssessmentAverages.slice().sort((a, b) => a.avg - b.avg)[0];
+    
+    // 4. Encontrar a média da turma *nessa mesma avaliação* para mostrar o "gap"
+    const classAvgForThisAssessment = classAssessmentAverages.find(a => a.index === priorityWeakest.index).avg;
+    const gap = Math.round((classAvgForThisAssessment - priorityWeakest.avg) * 100) / 100;
+
+    analysisHTML = `
+      <div class="row">
+        <div class="col" style="text-align:center; border-right: 1px solid var(--border-color);">
+          <div style="font-size: 1.1rem; font-weight: 600;">Média Geral (Turma)</div>
+          <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">${stats.classMean}</div>
+        </div>
+        <div class="col" style="text-align:center; border-right: 1px solid var(--border-color);">
+          <div style="font-size: 1.1rem; font-weight: 600;">Média Geral (Prioritário)</div>
+          <div style="font-size: 2rem; font-weight: bold; color: var(--danger);">${priorityOverallMean}</div>
+        </div>
+        <div class="col" style="text-align:center;">
+          <div style="font-size: 1.1rem; font-weight: 600;">Ponto de Maior Foco</div>
+          <div style="font-size: 2rem; font-weight: bold; color: var(--success);">Avaliação ${priorityWeakest.index + 1}</div>
+          <small>Pior média do grupo prioritário (${priorityWeakest.avg})</small>
+        </div>
+      </div>
+      <hr style="margin: 16px 0; border: 0; border-top: 1px solid var(--border-color);">
+      <strong>Foco Prioritário (Individual):</strong>
+      <ul style="margin: 8px 0 12px 20px;">${priorityListHTML}</ul>
+      <strong>Próximo Passo (Matemático):</strong>
+      <p style="margin-bottom:0;">
+        O ponto de maior alavancagem é a <strong>Avaliação ${priorityWeakest.index + 1}</strong>.
+        Nela, o grupo prioritário teve média <strong>${priorityWeakest.avg}</strong>, 
+        enquanto a média do resto da turma foi ${classAvgForThisAssessment} (uma diferença de ${gap} pontos). 
+        Revisar este conteúdo é a ação com maior potencial de impacto.
+      </p>
+    `;
+  }
+  
+  // *** Cria pílulas de notas para a TABELA GERAL ***
+  const tableRowsHTML = students.slice().sort((a,b)=>b.avg-a.avg).map(s => {
+    const gradesHTML = s.grades.map(g => {
+        const grade = isNaN(g) ? '-' : g;
+        return `<span class="grade-pill">${grade}</span>`;
+      }).join(' ');
+      
+    return `<tr><td>${s.name}</td><td><strong>${s.avg}</strong></td><td>${gradesHTML}</td></tr>`;
+  }).join('');
+
+
+  // Montar o HTML final
+  const lines = [
+    `<div class="callout callout--info" style="margin-top:0;">`, // Removido margin-top
+      `<h4 style="margin-top:0; color: var(--primary-dark);">Análise de Impacto & Foco (Por Avaliação)</h4>`,
+      analysisHTML, // Inserir a nova análise
+    `</div>`,
+    `<h4 class="result-heading" style="margin-top:24px;">Visão Geral da Turma (Lista Completa)</h4>`, // Usa classe
+    `<table><thead><tr><th>Aluno</th><th>Média</th><th>Notas Individuais</th></tr></thead><tbody>`,
+    tableRowsHTML, // Inserir as novas linhas da tabela
+    `</tbody></table>`
+  ];
+  
+  performanceResult.innerHTML = lines.join('');
+}
+// **************************************
+
+
+/* ---------- export CSV de grupos ---------- */
+btnExportCSV.addEventListener('click', ()=>{
+  const raw = input.value;
+  const students = parseStudents(raw);
+  if(students.length===0){ alert('Nenhum aluno para exportar.'); return;}
+  const mode = document.getElementById('mode').value;
+  const value = parseInt(document.getElementById('value').value,10) || 1;
+  const balanceMode = document.getElementById('balanceMode').value;
+  const {groups} = generateGroupsBalanced(students, {mode, value, balanceMode});
+  const rows = ['Grupo,Aluno,Media,Notas'];
+  groups.forEach((g,i)=>{
+    g.forEach(s=>{
+      rows.push(`"${i+1}","${s.name}",${s.avg},"${s.grades.join(';')}"`);
+    });
+  });
+  const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'grupos.csv'; document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+
+/* exportar lista alunos */
+btnExportSave.addEventListener('click', ()=>{
+  const raw = input.value;
+  if(!raw){ alert('Nenhuma lista para exportar.'); return; }
+  const blob = new Blob([raw], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'alunos_lista.csv'; document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+
+
+/* ---------- FERRAMENTA 2: Estruturador de Aula (5E) ---------- */
+// *** NOVAS ENTRADAS ADICIONADAS ***
+const plannerTimeInput = document.getElementById('plannerTime');
+const plannerTopicInput = document.getElementById('plannerTopic');
+const plannerObjectiveInput = document.getElementById('plannerObjective');
+const plannerResult = document.getElementById('plannerResult');
+// Múltiplos botões
+const btnPlannerNew = document.getElementById('btnPlannerNew');
+const btnPlannerPractice = document.getElementById('btnPlannerPractice');
+const btnPlannerAssess = document.getElementById('btnPlannerAssess');
+const plannerActions = document.getElementById('planner-actions');
+
+// Objeto com as "receitas" de tempo
+const plannerWeights = {
+  new: { engage: 0.15, explore: 0.35, explain: 0.25, elaborate: 0.15, evaluate: 0.10 },
+  practice: { engage: 0.10, explore: 0.20, explain: 0.10, elaborate: 0.40, evaluate: 0.20 },
+  assess: { engage: 0.05, explore: 0.0, explain: 0.15, elaborate: 0.0, evaluate: 0.80 }
+};
+
+// *** FUNÇÃO ATUALIZADA PARA USAR NOVAS ENTRADAS ***
+function getPlannerDescriptions(mode, topic, objective) {
+  const t = topic ? `<strong>${topic}</strong>` : "o tópico";
+  const o = objective ? `<strong>${objective}</strong>` : "o objetivo da aula";
+  
+  const descs = {
+    new: {
+      engage: `Comece com uma pergunta provocativa ou um vídeo curto sobre ${t}.`,
+      explore: `Atividade principal. Deixe os alunos investigarem ${t} (use a Ferramenta 1).`,
+      explain: "Momento de conceituar, corrigir erros e formalizar o aprendizado.",
+      elaborate: `Conecte ${t} com algo que eles já sabem ou um novo desafio.`,
+      evaluate: `Checagem rápida: os alunos conseguem ${o}?`
+    },
+    practice: {
+      engage: `Relembre o tópico: "Na última aula, vimos ${t}..."`,
+      explore: "Um rápido exercício de aquecimento.",
+      explain: "Tire as dúvidas principais da atividade anterior.",
+      elaborate: `Foco principal. Dê uma tarefa complexa que aplica ${t} (grupos!).`,
+      evaluate: `Avaliação: os alunos demonstram que alcançaram ${o}?`
+    },
+    assess: {
+      engage: "Preparação. Silêncio, guardem os materiais.",
+      explore: "-", // Não terá `li` gerada
+      explain: "Instruções claras para a avaliação. O objetivo é testar se vocês conseguem...",
+      elaborate: "-", // Não terá `li` gerada
+      evaluate: `Tempo de prova. Foco em avaliar se os alunos alcançaram ${o}.`
+    }
+  };
+  return descs[mode];
+}
+
+// *** FUNÇÃO generatePlan ATUALIZADA PARA TRADUZIR OS TÍTULOS ***
+function generatePlan(mode, clickedButton) {
+  // Gerencia o estado ativo dos botões
+  plannerActions.querySelectorAll('.btn').forEach(btn => {
+    btn.classList.remove('is-active');
+    btn.classList.add('btn--secondary');
+  });
+  clickedButton.classList.add('is-active');
+  clickedButton.classList.remove('btn--secondary');
+  
+  
+  const totalTime = parseInt(plannerTimeInput.value, 10) || 50;
+  // *** LÊ AS NOVAS ENTRADAS ***
+  const topic = plannerTopicInput.value.trim();
+  const objective = plannerObjectiveInput.value.trim();
+  
+  const weights = plannerWeights[mode];
+  const descriptions = getPlannerDescriptions(mode, topic, objective);
+  
+  // *** TRADUÇÕES ADICIONADAS AQUI ***
+  const translations = {
+      engage: 'Engajar',
+      explore: 'Explorar',
+      explain: 'Explicar',
+      elaborate: 'Elaborar',
+      evaluate: 'Avaliar'
+  };
+  
+  // *** FUNÇÃO INTERNA CORRIGIDA: Retorna 0 se o peso for 0 ***
+  const createTime = (percent) => {
+    if (percent <= 0) return 0; // Se o peso é 0, o tempo é 0
+    return Math.max(Math.round(totalTime * percent), 1); // Garante pelo menos 1 min se > 0
+  };
+  
+  let html = '';
+  // *** LÓGICA ATUALIZADA PARA PULAR ETAPAS COM TEMPO 0 ***
+  const stages = ['engage', 'explore', 'explain', 'elaborate', 'evaluate'];
+  stages.forEach(stage => {
+    const time = createTime(weights[stage]);
+    if (time > 0) { // Só adiciona a LI se o tempo for maior que 0
+      // *** USA A TRADUÇÃO AQUI ***
+      html += `
+        <li class="stage-${stage}">
+          <strong>${translations[stage]} (${time} min):</strong> ${descriptions[stage]}
+        </li>
+      `;
+    }
+  });
+
+  plannerResult.innerHTML = html;
+}
+// ***************************************************************
+
+// Adiciona os event listeners para os novos botões
+btnPlannerNew.addEventListener('click', (e) => generatePlan('new', e.target));
+btnPlannerPractice.addEventListener('click', (e) => generatePlan('practice', e.target));
+btnPlannerAssess.addEventListener('click', (e) => generatePlan('assess', e.target));
+
+
+/* ---------- FERRAMENTA 3: Nivelador de Perguntas (Bloom) ---------- */
+const questionTopicInput = document.getElementById('questionTopic');
+// *** NOVA ENTRADA ADICIONADA ***
+const questionContextInput = document.getElementById('questionContext');
+const questionResult = document.getElementById('questionResult');
+// Múltiplos botões
+const btnQuestionLow = document.getElementById('btnQuestionLow');
+const btnQuestionMedium = document.getElementById('btnQuestionMedium');
+const btnQuestionHigh = document.getElementById('btnQuestionHigh');
+const questionActions = document.getElementById('question-actions');
+
+// Banco de perguntas
+const bloomStems = {
+  lembrar: [
+    "O que é [TÓPICO]?",
+    "Liste os principais fatos sobre [TÓPICO].",
+    "Defina [TÓPICO]."
+  ],
+  entender: [
+    "Explique [TÓPICO] com suas próprias palavras.",
+    "Qual é a ideia principal de [TÓPICO]?",
+    "Resuma o processo de [TÓPICO]."
+  ],
+  aplicar: [
+    "Como [TÓPICO] seria usado para resolver [CONTEXTO]?",
+    "Demonstre como [TÓPICO] funciona em um exemplo real.",
+    "Qual seria o resultado se você aplicasse [TÓPICO] em [CONTEXTO]?"
+  ],
+  analisar: [
+    "Quais são as causas e efeitos de [TÓPICO]?",
+    "Compare e contraste [TÓPICO] com [CONTEXTO].",
+    "Quais são as partes que compõem [TÓPICO]?"
+  ],
+  avaliar: [
+    "Qual é a sua opinião sobre [TÓPICO] em relação a [CONTEXTO]? Defenda sua resposta.",
+    "Qual é a solução mais eficaz para [CONTEXTO]? Por quê?",
+    "Quais são os prós e contras de [TÓPICO]?"
+  ],
+  criar: [
+    "Crie um(a) novo(a) [CONTEXTO] baseado(a) em [TÓPICO].",
+    "Imagine uma alternativa para [TÓPICO]. Como funcionaria?",
+    "Proponha uma solução para [CONTEXTO] usando os princípios de [TÓPICO]."
+  ]
+};
+
+// Função para pegar um item aleatório de um array
+function getRandomStem(level) {
+  const stems = bloomStems[level];
+  return stems[Math.floor(Math.random() * stems.length)];
+}
+
+// *** FUNÇÃO ATUALIZADA PARA USAR NOVAS ENTRADAS ***
+function generateQuestions(mode, clickedButton) {
+  // Gerencia o estado ativo dos botões
+  questionActions.querySelectorAll('.btn').forEach(btn => {
+    btn.classList.remove('is-active');
+    btn.classList.add('btn--secondary');
+  });
+  clickedButton.classList.add('is-active');
+  clickedButton.classList.remove('btn--secondary');
+  
+  
+  const topic = questionTopicInput.value.trim();
+  const context = questionContextInput.value.trim();
+  
+  const topicOrDefault = topic ? `<strong>${topic}</strong>` : "o conceito";
+  // Define os contextos padrão se estiverem vazios
+  const contextOrDefault = context ? `<strong>${context}</strong>` : "um problema do mundo real";
+  const compareOrDefault = context ? `<strong>${context}</strong>` : "um conceito similar";
+  
+  
+  let html = '';
+  
+  if (mode === 'low') {
+    html = `
+      <li class="level-low">
+        <strong>Lembrar:</strong> ${getRandomStem('lembrar').replace('[TÓPICO]', topicOrDefault)}
+      </li>
+      <li class="level-low">
+        <strong>Entender:</strong> ${getRandomStem('entender').replace('[TÓPICO]', topicOrDefault)}
+      </li>
+    `;
+  } else if (mode === 'medium') {
+     html = `
+      <li class="level-medium">
+        <strong>Aplicar:</strong> ${getRandomStem('aplicar').replace('[TÓPICO]', topicOrDefault).replace('[CONTEXTO]', contextOrDefault)}
+      </li>
+      <li class="level-medium">
+        <strong>Analisar:</strong> ${getRandomStem('analisar').replace('[TÓPICO]', topicOrDefault).replace('[CONTEXTO]', compareOrDefault)}
+      </li>
+    `;
+  } else if (mode === 'high') {
+     html = `
+      <li class="level-high">
+        <strong>Avaliar:</strong> ${getRandomStem('avaliar').replace('[TÓPICO]', topicOrDefault).replace('[CONTEXTO]', contextOrDefault)}
+      </li>
+      <li class="level-high">
+        <strong>Criar:</strong> ${getRandomStem('criar').replace('[TÓPICO]', topicOrDefault).replace('[CONTEXTO]', contextOrDefault)}
+      </li>
+    `;
+  }
+  
+  questionResult.innerHTML = html;
+}
+
+// Adiciona os event listeners para os novos botões
+btnQuestionLow.addEventListener('click', (e) => generateQuestions('low', e.target));
+btnQuestionMedium.addEventListener('click', (e) => generateQuestions('medium', e.target));
+btnQuestionHigh.addEventListener('click', (e) => generateQuestions('high', e.target));
+
+
+</script>
+</body>
+</html>

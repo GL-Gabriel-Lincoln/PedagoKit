@@ -1,0 +1,444 @@
+/* --- 1. Importação de Fontes e Variáveis Globais --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap');
+
+:root {
+  /* Paleta de Cores "Acolhedora" */
+  --primary: #0077b6; /* Um azul mais calmo e profissional */
+  --primary-dark: #023e8a;
+  --accent: #f7a072; /* Um pêssego/laranja quente como "ação" */
+  --light-bg: #f8f9fa; /* Um cinza quase branco, muito suave */
+  --white: #ffffff;
+  --text-dark: #343a40; /* Cinza escuro, não preto puro */
+  --text-muted: #6c757d;
+  --border-color: #e9ecef; /* Borda muito leve */
+
+  /* Cores Semânticas (Semáforo) */
+  --danger: #e63946; /* Vermelho claro, menos agressivo */
+  --warning: #faa307; /* Amarelo/Laranja para sussurros */
+  --success: #52b788; /* Verde amigável */
+
+  /* Cores de Análise */
+  --info-bg: #e6f7ff;
+  --info-border: #b3e0ff;
+
+  /* Fontes */
+  --font-header: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Métricas de Design */
+  --border-radius: 8px;
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- 2. Reset e Estilos Base --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  background: var(--light-bg);
+  color: var(--text-dark);
+  line-height: 1.7; /* Mais espaçamento entre linhas para leitura */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-header);
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 0.75rem;
+}
+
+/* --- 3. Layout Principal --- */
+.container {
+  max-width: 1100px;
+  margin: 32px auto; /* Mais espaço do topo */
+  padding: 0 16px;
+  display: grid;
+  gap: 24px; /* Espaço consistente entre as seções */
+}
+
+header {
+  /* Gradiente sutil para um visual "avançado" */
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+  padding: 32px 24px;
+  text-align: center;
+  border-bottom: 4px solid var(--accent);
+}
+header h1 {
+  color: var(--white);
+  font-weight: 700;
+  font-size: 2.25rem;
+  margin-bottom: 8px;
+}
+header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* Barra de Navegação Limpa e Moderna */
+nav {
+  background: var(--white);
+  padding: 12px 24px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-light);
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.nav__link {
+  color: var(--primary);
+  margin: 0 8px;
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+.nav__link:hover, .nav__link:focus {
+  background: var(--light-bg);
+  color: var(--primary-dark);
+  transform: translateY(-2px);
+  outline: none;
+}
+.nav__link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+
+footer {
+  background: var(--primary-dark);
+  color: var(--white);
+  padding: 24px;
+  text-align: center;
+  margin-top: 32px;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* --- 4. Componentes Reutilizáveis (Botões, Inputs, Cards) --- */
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--accent);
+  color: #1c1c1c; /* Cor escura no botão laranja para legibilidade */
+  text-align: center;
+  box-shadow: var(--shadow-light);
+}
+.btn:hover {
+  background: #f58f59; /* Laranja mais claro no hover */
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+.btn:active {
+  transform: translateY(0);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+.btn--secondary {
+  background: var(--white);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+}
+.btn--secondary:hover {
+  background: var(--light-bg);
+  border-color: #ccc;
+  color: var(--text-dark);
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+/* *** NOVO ESTADO ATIVO *** */
+/* Faz um botão secundário parecer primário quando "ativo" */
+.btn--secondary.is-active {
+  background: var(--accent);
+  color: #1c1c1c;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-light);
+}
+
+
+/* Botões do Semáforo (Não mais usado, mas pode ficar) */
+.btn--red { background-color: var(--danger) !important; color: var(--white); }
+.btn--red:hover { background-color: #c91a2a !important; }
+.btn--yellow { background-color: var(--warning) !important; color: var(--white); }
+.btn--yellow:hover { background-color: #d68c06 !important; }
+.btn--green { background-color: var(--success) !important; color: var(--white); }
+.btn--green:hover { background-color: #45a274 !important; }
+
+
+/* Inputs e Textareas (Visual mais suave) */
+textarea, input[type="file"], input[type="text"], input[type="number"], select {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  width: 100%;
+  color: var(--text-dark);
+  transition: var(--transition);
+}
+textarea:focus, input[type="file"]:focus, input[type="text"]:focus, input[type="number"]:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(247, 160, 114, 0.25);
+}
+textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-dark);
+}
+
+/* Análise de Impacto (Visual "Acolhedor") */
+.callout {
+  padding: 16px 20px;
+  border-radius: var(--border-radius);
+  margin: 16px 0;
+  border: 1px solid;
+}
+.callout--info {
+  background: var(--info-bg);
+  border-color: var(--info-border);
+}
+.callout h4 {
+  color: var(--primary-dark);
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+/* --- 5. Estilos de Seção (BEM) --- */
+
+.tool-section {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-medium);
+  transition: var(--transition);
+  overflow: hidden; /* Para conter os cards internos */
+}
+.tool-section h2 {
+  font-size: 1.75rem;
+  padding: 24px 24px 0 24px;
+  margin: 0;
+}
+.tool-section p {
+  padding: 0 24px;
+}
+
+.tool-section__card {
+  padding: 24px;
+}
+/* Linha divisória suave */
+.tool-section__card--top-divider {
+  border-top: 1px solid var(--border-color);
+  margin-top: 24px;
+}
+
+
+.tool-section__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  align-items: center;
+}
+.tool-section__actions--center {
+  justify-content: center;
+}
+
+
+.row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.col {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* --- 6. Estilos Específicos das Ferramentas --- */
+
+/* Ferramenta 1: Grupos */
+#statsArea {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+#statsArea strong {
+  color: var(--text-dark);
+}
+
+/* *** NOVO TÍTULO DE RESULTADO *** */
+.result-heading {
+  color: var(--primary-dark);
+  margin-bottom: 16px;
+}
+
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.group-card {
+  background: var(--light-bg);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: var(--border-radius);
+}
+.group-card strong {
+  color: var(--primary-dark);
+  font-family: var(--font-header);
+}
+.group-card hr {
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  margin: 8px 0;
+}
+.group-card div {
+  margin-bottom: 4px;
+}
+.group-card small {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Ferramenta 2 e 3: Listas de Resultado */
+.result-list {
+  list-style: none;
+  margin-top: 8px;
+  padding-left: 0;
+}
+.result-list li {
+  padding: 10px 12px;
+  background: #fcfcfc;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  border-left: 4px solid var(--border-color);
+}
+/* Cores da borda (Bloom) */
+.result-list li.level-low { border-left-color: var(--success); }
+.result-list li.level-medium { border-left-color: var(--warning); }
+.result-list li.level-high { border-left-color: var(--danger); }
+/* Cores da borda (5E) */
+.result-list li.stage-engage { border-left-color: var(--primary); }
+.result-list li.stage-explore { border-left-color: var(--accent); }
+.result-list li.stage-explain { border-left-color: var(--primary-dark); }
+.result-list li.stage-elaborate { border-left-color: var(--accent); }
+.result-list li.stage-evaluate { border-left-color: var(--success); }
+
+
+/* Tabela de Performance e Pílulas de Notas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+th, td {
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  text-align: left;
+  vertical-align: middle;
+}
+th {
+  font-family: var(--font-header);
+  background-color: var(--light-bg);
+  color: var(--primary-dark);
+}
+tbody tr:nth-child(even) {
+  background-color: var(--white);
+}
+tbody tr:nth-child(odd) {
+  background-color: #fcfcfc;
+}
+
+/* Pílulas de Notas "Acolhedoras" */
+.grade-pill {
+  display: inline-block;
+  min-width: 32px;
+  padding: 3px 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  text-align: center;
+  background-color: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  margin: 2px;
+  color: var(--text-dark);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.03);
+}
+
+/* --- 7. Estilos de Acessibilidade (Fieldset) --- */
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+fieldset legend {
+  font-family: var(--font-body);
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-dark);
+  padding: 0;
+}
+
+
+/* --- 8. Responsividade --- */
+@media (max-width: 720px) {
+  .row {
+    flex-direction: column;
+  }
+  nav {
+    position: static;
+  }
+  .nav__link {
+    flex-basis: 100%;
+    text-align: center;
+  }
+  .tool-section__actions {
+    flex-direction: column;
+  }
+  .btn, .btn--secondary {
+    width: 100%;
+  }
+  .tool-section h2 {
+    font-size: 1.5rem;
+  }
+}
