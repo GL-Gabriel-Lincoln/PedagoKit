@@ -26,6 +26,7 @@
 
   <section id="groups" class="tool-section">
     <h2>Ferramenta 1: Gerador de Grupos & Análise de Impacto</h2>
+    <p>Use as notas dos alunos para criar grupos equilibrados e descubra onde focar para melhorar a média da turma.</p>
     
     <div class="tool-section__card">
       <div class="row">
@@ -50,8 +51,8 @@
               <option value="numGroups">Número de grupos</option>
               <option value="groupSize">Tamanho do grupo</option>
             </select>
-            <label for="value" class="sr-only">Valor para o modo (oculto)</label>
-            <input type="number" id="value" min="1" value="3" style="width:120px;margin-left:8px" />
+            <label for="value" class="sr-only">Valor para o modo selecionado</label> 
+            <input type="number" id="value" min="1" value="3" style="width:120px;margin-left:8px" aria-label="Valor para o modo selecionado"/>
           </div>
 
           <div style="margin-top:8px">
@@ -87,7 +88,7 @@
   
   <section id="lesson-planner" class="tool-section">
     <h2>Ferramenta 2: Estruturador de Aula (Modelo 5E)</h2>
-    <p>Planeje o tempo da sua aula. Insira a duração, tópico, objetivo e escolha o foco pedagógico.</p>
+    <p>Defina o tempo, tópico e objetivo da aula, escolha o foco (matéria nova, revisão?) e veja uma sugestão de estrutura 5E.</p>
     <div class="tool-section__card">
       <div class="row">
         <div class="col">
@@ -120,8 +121,8 @@
   </section>
 
   <section id="question-leveler" class="tool-section">
-    <h2>Ferramenta 3: Nivelador de Perguntas (Taxonomia de Bloom)</h2>
-    <p>Insira o tópico, um contexto (opcional) e escolha o objetivo cognitivo para gerar perguntas diferenciadas.</p>
+    <h2>Ferramenta 3: Nivelador de Perguntas (Bloom)</h2>
+    <p>Crie perguntas em diferentes níveis de dificuldade para sua turma. Informe o tópico, um contexto (opcional) e o objetivo.</p>
     <div class="tool-section__card">
       <div class="row">
         <div class="col">
@@ -131,7 +132,7 @@
           <label for="questionContext" style="margin-top: 16px;">2. Contexto de Aplicação (Opcional):</label>
           <input type="text" id="questionContext" placeholder="Ex: Receita de bolo, dividir uma pizza, dinheiro">
           
-          <fieldset style="margin-top: 16px;">
+           <fieldset style="margin-top: 16px;">
             <legend>3. Escolha o Objetivo Cognitivo:</legend>
              <div class="tool-section__actions" id="question-actions">
               <button id="btnQuestionLow" class="btn btn--secondary">Checagem Rápida</button>

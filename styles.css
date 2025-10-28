@@ -1,31 +1,31 @@
-/* --- 1. Importação de Fontes e Variáveis Globais --- */
+/* 1. Imports & Global Variables */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap');
 
 :root {
-  /* Paleta de Cores "Acolhedora" */
-  --primary: #0077b6; /* Um azul mais calmo e profissional */
+  /* Color Palette */
+  --primary: #0077b6; 
   --primary-dark: #023e8a;
-  --accent: #f7a072; /* Um pêssego/laranja quente como "ação" */
-  --light-bg: #f8f9fa; /* Um cinza quase branco, muito suave */
+  --accent: #f7a072; 
+  --light-bg: #f8f9fa; 
   --white: #ffffff;
-  --text-dark: #343a40; /* Cinza escuro, não preto puro */
+  --text-dark: #343a40; 
   --text-muted: #6c757d;
-  --border-color: #e9ecef; /* Borda muito leve */
+  --border-color: #e9ecef; 
 
-  /* Cores Semânticas (Semáforo) */
-  --danger: #e63946; /* Vermelho claro, menos agressivo */
-  --warning: #faa307; /* Amarelo/Laranja para sussurros */
-  --success: #52b788; /* Verde amigável */
+  /* Semantic Colors */
+  --danger: #e63946; 
+  --warning: #faa307; 
+  --success: #52b788; 
 
-  /* Cores de Análise */
+  /* Analysis Colors */
   --info-bg: #e6f7ff;
   --info-border: #b3e0ff;
 
-  /* Fontes */
+  /* Fonts */
   --font-header: 'Poppins', sans-serif;
   --font-body: 'Inter', sans-serif;
 
-  /* Métricas de Design */
+  /* Design Metrics */
   --border-radius: 8px;
   --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -36,7 +36,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* --- 2. Reset e Estilos Base --- */
+/* 2. Base Styles & Reset */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -48,7 +48,7 @@ body {
   font-weight: 400;
   background: var(--light-bg);
   color: var(--text-dark);
-  line-height: 1.7; /* Mais espaçamento entre linhas para leitura */
+  line-height: 1.7; 
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -58,17 +58,16 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.75rem;
 }
 
-/* --- 3. Layout Principal --- */
+/* 3. Main Layout (Container, Header, Nav, Footer) */
 .container {
   max-width: 1100px;
-  margin: 32px auto; /* Mais espaço do topo */
+  margin: 32px auto; 
   padding: 0 16px;
   display: grid;
-  gap: 24px; /* Espaço consistente entre as seções */
+  gap: 24px; 
 }
 
 header {
-  /* Gradiente sutil para um visual "avançado" */
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: var(--white);
   padding: 32px 24px;
@@ -86,7 +85,6 @@ header p {
   opacity: 0.9;
 }
 
-/* Barra de Navegação Limpa e Moderna */
 nav {
   background: var(--white);
   padding: 12px 24px;
@@ -124,7 +122,6 @@ nav {
   outline-offset: 2px;
 }
 
-
 footer {
   background: var(--primary-dark);
   color: var(--white);
@@ -135,7 +132,7 @@ footer {
   opacity: 0.9;
 }
 
-/* --- 4. Componentes Reutilizáveis (Botões, Inputs, Cards) --- */
+/* 4. Reusable Components (Buttons, Inputs, Callouts) */
 
 .btn {
   font-family: var(--font-body);
@@ -147,12 +144,12 @@ footer {
   cursor: pointer;
   transition: var(--transition);
   background: var(--accent);
-  color: #1c1c1c; /* Cor escura no botão laranja para legibilidade */
+  color: #1c1c1c; 
   text-align: center;
   box-shadow: var(--shadow-light);
 }
 .btn:hover {
-  background: #f58f59; /* Laranja mais claro no hover */
+  background: #f58f59; 
   transform: translateY(-2px);
   box-shadow: var(--shadow-medium);
 }
@@ -178,8 +175,6 @@ footer {
   transform: translateY(0);
 }
 
-/* *** NOVO ESTADO ATIVO *** */
-/* Faz um botão secundário parecer primário quando "ativo" */
 .btn--secondary.is-active {
   background: var(--accent);
   color: #1c1c1c;
@@ -187,8 +182,7 @@ footer {
   box-shadow: var(--shadow-light);
 }
 
-
-/* Botões do Semáforo (Não mais usado, mas pode ficar) */
+/* Button Color Modifiers (e.g., for Bloom levels, though not used now) */
 .btn--red { background-color: var(--danger) !important; color: var(--white); }
 .btn--red:hover { background-color: #c91a2a !important; }
 .btn--yellow { background-color: var(--warning) !important; color: var(--white); }
@@ -197,7 +191,7 @@ footer {
 .btn--green:hover { background-color: #45a274 !important; }
 
 
-/* Inputs e Textareas (Visual mais suave) */
+/* Inputs & Textareas */
 textarea, input[type="file"], input[type="text"], input[type="number"], select {
   font-family: var(--font-body);
   font-size: 1rem;
@@ -225,7 +219,7 @@ label {
   color: var(--text-dark);
 }
 
-/* Análise de Impacto (Visual "Acolhedor") */
+/* Callouts (e.g., Analysis Box) */
 .callout {
   padding: 16px 20px;
   border-radius: var(--border-radius);
@@ -242,33 +236,33 @@ label {
   margin-bottom: 12px;
 }
 
-/* --- 5. Estilos de Seção (BEM) --- */
+/* 5. Tool Section Structure */
 
 .tool-section {
   background: var(--white);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-medium);
   transition: var(--transition);
-  overflow: hidden; /* Para conter os cards internos */
+  overflow: hidden; 
 }
 .tool-section h2 {
   font-size: 1.75rem;
   padding: 24px 24px 0 24px;
   margin: 0;
 }
-.tool-section p {
-  padding: 0 24px;
+/* Default paragraph style within sections */
+.tool-section > p { 
+  padding: 8px 24px 0 24px; /* Added top padding */
+  color: var(--text-muted);
 }
 
 .tool-section__card {
   padding: 24px;
 }
-/* Linha divisória suave */
 .tool-section__card--top-divider {
   border-top: 1px solid var(--border-color);
   margin-top: 24px;
 }
-
 
 .tool-section__actions {
   display: flex;
@@ -281,7 +275,6 @@ label {
   justify-content: center;
 }
 
-
 .row {
   display: flex;
   gap: 24px;
@@ -292,9 +285,9 @@ label {
   min-width: 250px;
 }
 
-/* --- 6. Estilos Específicos das Ferramentas --- */
+/* 6. Tool-Specific Styles */
 
-/* Ferramenta 1: Grupos */
+/* Tool 1: Group Generator */
 #statsArea {
   font-weight: 500;
   color: var(--text-muted);
@@ -303,8 +296,7 @@ label {
   color: var(--text-dark);
 }
 
-/* *** NOVO TÍTULO DE RESULTADO *** */
-.result-heading {
+.result-heading { /* Used by Groups & Analysis Table */
   color: var(--primary-dark);
   margin-bottom: 16px;
 }
@@ -338,7 +330,7 @@ label {
   color: var(--text-muted);
 }
 
-/* Ferramenta 2 e 3: Listas de Resultado */
+/* Tools 2 & 3: Result Lists */
 .result-list {
   list-style: none;
   margin-top: 8px;
@@ -351,11 +343,11 @@ label {
   margin-bottom: 6px;
   border-left: 4px solid var(--border-color);
 }
-/* Cores da borda (Bloom) */
+/* Bloom Level Colors */
 .result-list li.level-low { border-left-color: var(--success); }
 .result-list li.level-medium { border-left-color: var(--warning); }
 .result-list li.level-high { border-left-color: var(--danger); }
-/* Cores da borda (5E) */
+/* 5E Stage Colors */
 .result-list li.stage-engage { border-left-color: var(--primary); }
 .result-list li.stage-explore { border-left-color: var(--accent); }
 .result-list li.stage-explain { border-left-color: var(--primary-dark); }
@@ -363,7 +355,7 @@ label {
 .result-list li.stage-evaluate { border-left-color: var(--success); }
 
 
-/* Tabela de Performance e Pílulas de Notas */
+/* Analysis Table & Grade Pills */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -387,7 +379,6 @@ tbody tr:nth-child(odd) {
   background-color: #fcfcfc;
 }
 
-/* Pílulas de Notas "Acolhedoras" */
 .grade-pill {
   display: inline-block;
   min-width: 32px;
@@ -404,7 +395,7 @@ tbody tr:nth-child(odd) {
   box-shadow: 0 1px 1px rgba(0,0,0,0.03);
 }
 
-/* --- 7. Estilos de Acessibilidade (Fieldset) --- */
+/* 7. Accessibility Styles (Fieldset, Screen Reader Only) */
 
 fieldset {
   border: none;
@@ -419,8 +410,21 @@ fieldset legend {
   padding: 0;
 }
 
+/* Utility class to visually hide elements but keep them for screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
 
-/* --- 8. Responsividade --- */
+
+/* 8. Responsive Design */
 @media (max-width: 720px) {
   .row {
     flex-direction: column;
