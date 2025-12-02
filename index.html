@@ -6,580 +6,501 @@
   <title>PedagoKit — Gestor Avançado de Grupos</title>
   
   <style>
-    /* 1. Imports & Global Variables */
+    /* VARIÁVEIS E RESET */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap');
-
     :root {
-      --primary: #0077b6; 
-      --primary-dark: #023e8a;
-      --accent: #f7a072; 
-      --light-bg: #f8f9fa; 
-      --white: #ffffff;
-      --text-dark: #343a40; 
-      --text-muted: #6c757d;
-      --border-color: #e9ecef; 
-      --danger: #e63946; 
-      --warning: #faa307; 
-      --success: #52b788; 
-      --info-bg: #e6f7ff;
-      --info-border: #b3e0ff;
-      --font-header: 'Poppins', sans-serif;
-      --font-body: 'Inter', sans-serif;
-      --border-radius: 8px;
-      --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --transition: all 0.3s ease;
+      --primary: #0077b6; --primary-dark: #023e8a; --accent: #f7a072; 
+      --light-bg: #f8f9fa; --white: #ffffff; --text-dark: #343a40; 
+      --border-color: #e9ecef; --danger: #e63946; --success: #52b788;
+      --font-body: 'Inter', sans-serif; --font-header: 'Poppins', sans-serif;
+      --radius: 8px; --shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
-
-    html { scroll-behavior: smooth; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font-body); background: var(--light-bg); color: var(--text-dark); line-height: 1.7; }
-    h1, h2, h3 { font-family: var(--font-header); color: var(--primary-dark); margin-bottom: 0.75rem; }
-
-    /* Layout */
-    .container { max-width: 1100px; margin: 32px auto; padding: 0 16px; display: grid; gap: 24px; }
-    header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--white); padding: 32px 24px; text-align: center; border-bottom: 4px solid var(--accent); }
-    header h1 { color: var(--white); font-weight: 700; font-size: 2.25rem; }
+    body { font-family: var(--font-body); background: var(--light-bg); color: var(--text-dark); line-height: 1.6; }
     
-    /* Nav */
-    nav { background: var(--white); padding: 12px; text-align: center; border-bottom: 1px solid var(--border-color); display: flex; justify-content: center; gap: 8px; }
-    .nav__link { color: var(--primary); text-decoration: none; font-weight: 500; padding: 8px 12px; border-radius: var(--border-radius); transition: var(--transition); }
-    .nav__link:hover { background: var(--light-bg); color: var(--primary-dark); }
-
-    /* UI Components */
-    .btn { font-family: var(--font-body); font-weight: 600; padding: 10px 18px; border-radius: var(--border-radius); border: none; cursor: pointer; background: var(--accent); color: #1c1c1c; box-shadow: var(--shadow-light); transition: var(--transition); }
-    .btn:hover { background: #f58f59; transform: translateY(-2px); }
-    .btn--secondary { background: var(--white); color: var(--text-muted); border: 1px solid var(--border-color); box-shadow: none; }
-    .btn--secondary:hover { background: var(--light-bg); color: var(--text-dark); transform: translateY(0); }
-
-    textarea, input, select { font-family: var(--font-body); padding: 10px 12px; border-radius: var(--border-radius); border: 1px solid var(--border-color); width: 100%; margin-bottom: 8px; }
-    textarea { min-height: 160px; font-family: monospace; font-size: 0.9rem; }
-
-    /* Cards & Sections */
-    .tool-section { background: var(--white); border-radius: var(--border-radius); box-shadow: var(--shadow-medium); overflow: hidden; }
-    .tool-section__card { padding: 24px; }
-    .tool-section__card--top-divider { border-top: 1px solid var(--border-color); margin-top: 0; }
+    /* LAYOUT */
+    .container { max-width: 1200px; margin: 20px auto; padding: 0 16px; display: grid; gap: 20px; }
+    header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 24px; text-align: center; border-radius: 0 0 16px 16px; margin-bottom: 20px; }
+    header h1 { font-family: var(--font-header); font-size: 2rem; }
+    
+    /* COMPONENTES */
+    .card { background: white; padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow); }
     .row { display: flex; gap: 24px; flex-wrap: wrap; }
     .col { flex: 1; min-width: 300px; }
-    .tool-section__actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     
-    /* Results */
-    .groups-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 24px; }
-    .group-card { background: var(--light-bg); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--border-radius); }
-    .grade-pill { display: inline-block; padding: 2px 6px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px; background: #fff; margin-left: 4px; }
-    .tag { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; margin-right: 4px; font-weight: 600; text-transform: uppercase; }
-    .tag--m { background: #dbeafe; color: #1e40af; } /* Azul */
-    .tag--f { background: #fce7f3; color: #9d174d; } /* Rosa */
+    textarea, input, select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: var(--radius); margin-bottom: 12px; font-family: inherit; }
+    textarea { min-height: 180px; font-family: monospace; font-size: 0.9rem; }
     
-    table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.9rem; }
-    th, td { padding: 8px; border: 1px solid var(--border-color); text-align: left; }
-    th { background: var(--light-bg); }
-
-    .callout { padding: 16px; background: var(--info-bg); border: 1px solid var(--info-border); border-radius: var(--border-radius); margin-top: 16px; }
-    small code { background: #eee; padding: 2px 4px; border-radius: 4px; }
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    .btn { background: var(--accent); color: #222; font-weight: 600; border: none; padding: 12px 20px; border-radius: var(--radius); cursor: pointer; transition: 0.2s; width: 100%; }
+    .btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
+    .btn--secondary { background: white; border: 1px solid #ccc; color: #555; margin-bottom: 0; }
+    
+    /* RESULTADOS */
+    .grid-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; margin-top: 20px; }
+    .group-card { background: #fdfdfd; border: 1px solid #eee; padding: 16px; border-radius: var(--radius); position: relative; }
+    .group-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid var(--primary); }
+    .group-avg { font-size: 0.85rem; font-weight: bold; color: var(--primary); background: #e0f2fe; padding: 2px 6px; border-radius: 4px; }
+    
+    .student-item { font-size: 0.95rem; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .tag { font-size: 0.7rem; font-weight: bold; padding: 2px 5px; border-radius: 4px; color: white; min-width: 20px; text-align: center; }
+    .tag--m { background-color: #3b82f6; } /* Azul */
+    .tag--f { background-color: #ec4899; } /* Rosa */
+    .grade-pill { font-size: 0.75rem; background: #eee; padding: 1px 5px; border-radius: 4px; color: #555; }
+    
+    .analysis-box { background: #f0f9ff; border-left: 5px solid var(--primary); padding: 16px; margin-top: 20px; }
+    .highlight-red { color: var(--danger); font-weight: bold; font-size: 1.2rem; }
+    
+    .helper-text { font-size: 0.85rem; color: #666; background: #f8f9fa; padding: 10px; border-radius: var(--radius); margin-top: 10px; }
   </style>
-
 </head>
 <body>
 
 <header>
-  <h1>PedagoKit</h1>
-  <p>Gestor de Grupos Inteligente para Professores</p>
+  <h1>PedagoKit v3.0</h1>
+  <p>Gestor Inteligente: Notas, Gênero e Regras de Convivência</p>
 </header>
-
-<nav>
-  <a class="nav__link" href="#groups">Diagnosticar e Agrupar</a>
-  <a class="nav__link" href="#mvp">Instruções</a>
-</nav>
 
 <div class="container">
 
-  <section id="groups" class="tool-section">
-    <h2>Gerador de Grupos & Análise de Impacto</h2>
-    <p style="padding: 0 24px; color: #666;">
-      Configure os critérios (aleatório, notas, gênero, exceções) e gere grupos otimizados automaticamente.
-    </p>
-    
-    <div class="tool-section__card">
-      <div class="row">
-        <div class="col">
-          <label for="inputStudents"><strong>Lista de Alunos (CSV)</strong></label>
-          <textarea id="inputStudents" placeholder="Formato: Nome, Gênero, Evitar, Juntar, Nota1, Nota2...&#10;Exemplo:&#10;Ana, F, Pedro, , 8.5, 9.0&#10;João, M, , Carlos, 6.0, 7.5&#10;Carlos, M, , João, 5.0, 5.5&#10;Pedro, M, Ana, , 7.0, 8.0" aria-describedby="student-list-info"></textarea>
-          
-          <div id="student-actions" class="tool-section__actions">
-            <button id="btnPasteSample" class="btn btn--secondary">Carregar Exemplo Completo</button>
-            <button id="btnClearList" class="btn btn--secondary">Limpar</button>
-          </div>
-          
-          <div class="callout" style="margin-top: 12px; font-size: 0.9rem;">
-            <strong>Como preencher:</strong><br>
-            <code>Nome, Gênero (M/F), Quem Evitar, Quem Juntar, Nota1, Nota2...</code><br>
-            <ul style="margin-left: 16px; margin-top: 4px;">
-              <li><strong>Gênero:</strong> Use M ou F.</li>
-              <li><strong>Evitar:</strong> Nome do aluno que NÃO deve ficar junto.</li>
-              <li><strong>Juntar:</strong> Nome do aluno que DEVE ficar junto (Intencional).</li>
-              <li>Deixe em branco (entre vírgulas) se não houver regra.</li>
-            </ul>
-          </div>
+  <div class="card">
+    <div class="row">
+      
+      <div class="col">
+        <label><strong>1. Lista de Alunos (CSV)</strong></label>
+        <textarea id="inputStudents" placeholder="Formato: Nome, Gênero, Evitar, Juntar, Nota1..."></textarea>
+        
+        <div style="display: flex; gap: 10px;">
+          <button id="btnPasteSample" class="btn btn--secondary">Exemplo Completo</button>
+          <button id="btnClear" class="btn btn--secondary">Limpar</button>
         </div>
 
-        <div class="col">
-          <label for="mode"><strong>1. Estrutura dos Grupos</strong></label>
-          <div style="display: flex; gap: 8px;">
-            <select id="mode" style="flex: 2;">
-              <option value="numGroups">Definir Nº de Grupos</option>
-              <option value="groupSize">Definir Tamanho do Grupo</option>
-            </select>
-            <input type="number" id="value" min="1" value="4" style="flex: 1;" aria-label="Valor numérico" />
-          </div>
+        <div class="helper-text">
+          <strong>Legenda das Colunas:</strong><br>
+          1. Nome <br>
+          2. Gênero (M/F)<br>
+          3. Evitar (Nome de quem não pode estar junto)<br>
+          4. Juntar (Nome de quem DEVE estar junto)<br>
+          5+. Notas (separadas por vírgula)
+        </div>
+      </div>
 
-          <label for="balanceMode" style="margin-top: 12px;"><strong>2. Critério de Agrupamento</strong></label>
-          <select id="balanceMode">
-            <option value="random">1. Totalmente Aleatório</option>
-            <option value="grades">2. Equilibrado por Notas (Heterogêneo)</option>
-            <option value="gender">3. Equilibrado por Gênero</option>
-            <option value="rules">4. Aleatório com Regras (Evitar/Juntar)</option>
-            <option value="intentional">5. Intencional (Prioriza Vínculos/Juntar)</option>
+      <div class="col">
+        <label><strong>2. Configuração dos Grupos</strong></label>
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+          <select id="mode" style="margin-bottom:0;">
+            <option value="numGroups">Nº de Grupos</option>
+            <option value="groupSize">Tam. Máximo do Grupo</option>
           </select>
-          
-          <div class="tool-section__actions" style="margin-top: 24px;">
-            <button id="btnGenerate" class="btn" style="width: 100%;">Gerar Grupos</button>
-          </div>
-          
-          <div class="tool-section__actions">
-            <button id="btnExportCSV" class="btn btn--secondary" style="flex:1;">Baixar CSV</button>
-          </div>
-
-          <div id="statsArea" style="margin-top:16px; padding: 12px; background: #f1f3f5; border-radius: 8px;">
-            Aguardando geração...
-          </div>
+          <input type="number" id="value" min="1" value="4" style="margin-bottom:0;">
         </div>
+
+        <label><strong>3. Critério (Algoritmo)</strong></label>
+        <select id="balanceMode">
+          <option value="random">1. Aleatório Simples</option>
+          <option value="grades">2. Equilibrado por Notas (Heterogêneo)</option>
+          <option value="gender_het">3. Gênero Misto (Equilibrado)</option>
+          <option value="gender_hom">4. Gênero Homogêneo (Meninos c/ Meninos)</option>
+          <option value="rules">5. Aleatório com Regras (Evitar/Juntar)</option>
+          <option value="grades_rules">6. Híbrido: Notas + Regras (Avançado)</option>
+        </select>
+
+        <button id="btnGenerate" class="btn">Gerar Grupos Agora</button>
+        
+        <div id="quickStats" style="margin-top: 15px; padding: 10px; background: #eee; border-radius: var(--radius); display: none;">
+          </div>
       </div>
     </div>
-    
-    <div id="resultArea" class="tool-section__card tool-section__card--top-divider" aria-live="polite"></div>
+  </div>
 
-    <div class="tool-section__card tool-section__card--top-divider">
-      <h3 class="result-heading">Análise de Performance da Turma</h3>
-      <div id="performanceResult" aria-live="polite">
-        Gere os grupos para ver a análise de impacto.
-      </div>
-    </div>
+  <div id="resultSection" class="card" style="display: none;">
+    <h3 style="border-bottom: 1px solid #eee; padding-bottom: 10px;">Grupos Gerados</h3>
+    <div id="groupsGrid" class="grid-groups"></div>
+    <button id="btnExport" class="btn btn--secondary" style="margin-top: 20px;">Baixar CSV</button>
+  </div>
 
-  </section>
-  
-  <section id="mvp" class="tool-section">
-    <h2>Sobre os Casos de Uso</h2>
-    <div class="tool-section__card">
-      <ul>
-        <li><strong>Aleatórios:</strong> Mistura pura, ideal para "quebrar o gelo".</li>
-        <li><strong>Baseados em Nota:</strong> Cria grupos com médias similares, misturando alunos com dificuldades e facilidades (Tutoria por Pares).</li>
-        <li><strong>Baseados em Gênero:</strong> Tenta garantir que todos os grupos tenham proporção igual de meninos e meninas.</li>
-        <li><strong>Regras (Com Exceções):</strong> Respeita a coluna "Evitar". Ideal para separar alunos que conversam muito ou têm conflitos.</li>
-        <li><strong>Intencionais (Com Pré-definições):</strong> Respeita a coluna "Juntar". Ideal quando o professor já definiu duplas que devem trabalhar juntas.</li>
-      </ul>
-    </div>
-  </section>
+  <div id="analysisSection" class="card" style="display: none;">
+    <h3>Análise de Impacto (Dados para a Banca)</h3>
+    <div id="analysisContent"></div>
+  </div>
 
 </div>
 
-<footer>
-  <p>© 2025 — PedagoKit v2.0</p>
-</footer>
-
 <script>
-/* ---------------- LÓGICA DE DADOS ---------------- */
+/* --- LÓGICA E ALGORITMOS --- */
 
+// 1. Parser (Transforma texto em objetos)
 function parseStudents(raw) {
-  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-  const students = [];
-  
-  for (const line of lines) {
-    // Divide por vírgula, ponto e vírgula ou tabulação
+  const lines = raw.split('\n').filter(l => l.trim());
+  return lines.map(line => {
     const parts = line.split(/[,;\t]+/).map(p => p.trim());
+    const grades = parts.slice(4).map(g => parseFloat(g)).filter(n => !isNaN(n));
+    const avg = grades.length ? grades.reduce((a,b)=>a+b,0)/grades.length : 0;
     
-    if (parts.length < 1) continue;
-
-    // Mapeamento das colunas:
-    // 0: Nome
-    // 1: Gênero (M/F) - Opcional
-    // 2: Evitar (Nome) - Opcional
-    // 3: Juntar (Nome) - Opcional
-    // 4+: Notas...
-    
-    const name = parts[0];
-    const gender = parts[1] ? parts[1].toUpperCase().charAt(0) : ''; 
-    const avoid = parts[2] || '';
-    const mustPair = parts[3] || '';
-    
-    // Processamento de Notas (pega do índice 4 em diante)
-    // Se não houver notas, retorna array vazio
-    const rawGrades = parts.slice(4);
-    const validGrades = rawGrades.map(s => {
-       const v = parseFloat(s.replace(',', '.'));
-       return isNaN(v) ? null : v;
-    }).filter(v => v !== null);
-
-    const avg = validGrades.length > 0 
-      ? validGrades.reduce((a,b)=>a+b,0) / validGrades.length 
-      : 0;
-
-    students.push({
-      id: name.toLowerCase(), // ID para facilitar busca
-      name,
-      gender,
-      avoid: avoid.toLowerCase(),
-      mustPair: mustPair.toLowerCase(),
-      grades: validGrades,
+    return {
+      id: parts[0].toLowerCase(), // ID para busca
+      name: parts[0],
+      gender: parts[1] ? parts[1].toUpperCase().charAt(0) : '?',
+      avoid: parts[2] ? parts[2].toLowerCase() : null,
+      mustPair: parts[3] ? parts[3].toLowerCase() : null,
+      grades: grades,
       avg: Math.round(avg * 100) / 100
-    });
-  }
-  return students;
+    };
+  });
 }
 
-/* ---------------- ESTATÍSTICAS ---------------- */
-
-function mean(arr) {
-  if (arr.length === 0) return 0;
-  return arr.reduce((a,b)=>a+b,0) / arr.length;
+// 2. Estatísticas Simples
+function getStats(students) {
+  const avgs = students.map(s => s.avg);
+  const mean = avgs.reduce((a,b)=>a+b,0) / avgs.length;
+  const variance = avgs.reduce((a,b)=>a + Math.pow(b-mean, 2), 0) / avgs.length;
+  return { mean: mean.toFixed(2), stdDev: Math.sqrt(variance).toFixed(2) };
 }
 
-function stddev(arr) {
-  if (arr.length < 2) return 0;
-  const m = mean(arr);
-  const v = arr.reduce((s,x)=>s + (x-m)*(x-m), 0) / arr.length;
-  return Math.sqrt(v);
-}
-
-/* ---------------- MOTORES DE AGRUPAMENTO ---------------- */
-
-function generateGroups(students, opts) {
-  const n = students.length;
-  if (n === 0) return { groups: [], stats: {} };
-
-  // Calcular número de grupos (k)
-  let k = 1;
+// 3. Gerador Principal
+function generate(students, opts) {
+  // A. Define número de grupos (K)
+  let k = opts.value;
   if (opts.mode === 'groupSize') {
-    const size = Math.max(1, Math.floor(opts.value));
-    k = Math.max(1, Math.ceil(n / size));
-  } else {
-    k = Math.max(1, Math.floor(opts.value));
+    // Correção do Bug de Tamanho: Math.ceil garante grupos suficientes
+    k = Math.ceil(students.length / opts.value);
+  }
+  
+  // Inicializa grupos vazios
+  let groups = Array.from({length: k}, () => []);
+  let pool = [...students]; // Cópia para não alterar original
+
+  // B. Seleção de Algoritmo
+  
+  // --- MODO 4: GÊNERO HOMOGÊNEO (Novo) ---
+  if (opts.algo === 'gender_hom') {
+    // Separa por gênero
+    const boys = pool.filter(s => s.gender === 'M');
+    const girls = pool.filter(s => s.gender !== 'M');
+    
+    // Distribui Meninos nos primeiros grupos até encher ou acabar
+    let currentGroup = 0;
+    
+    // Função auxiliar para distribuir lista sequencialmente
+    const fillSequential = (list) => {
+      list.forEach(s => {
+        groups[currentGroup].push(s);
+        // Avança grupo se atingiu tamanho ideal (distribuição equilibrada) ou round-robin
+        // Para homogêneo simples, vamos usar Round-Robin mas restrito aos grupos
+        currentGroup = (currentGroup + 1) % k;
+      });
+    };
+    
+    // *Estratégia Melhorada*: Tentar encher grupos inteiros com um gênero
+    // Mas para MVP simples, vamos distribuir meninos nos grupos 0, 1... 
+    // e meninas nos grupos K, K-1... (inverso) para tentar segregar
+    
+    // Vamos usar uma estratégia de "Buckets": 
+    // Grupos de meninos e Grupos de meninas.
+    const kBoys = Math.round((boys.length / pool.length) * k) || 1;
+    const kGirls = k - kBoys;
+    
+    // Distribui meninos nos primeiros kBoys grupos
+    boys.forEach((s, i) => groups[i % kBoys].push(s));
+    
+    // Distribui meninas nos grupos restantes
+    // Se só tiver 1 tipo, vai tudo pro mesmo, ok.
+    if (kGirls > 0) {
+      girls.forEach((s, i) => groups[kBoys + (i % kGirls)].push(s));
+    } else {
+      // Fallback se proporção der errado
+      girls.forEach((s, i) => groups[i % k].push(s));
+    }
+
+  } 
+  
+  // --- MODO 2: NOTAS (Greedy / Snake) ---
+  else if (opts.algo === 'grades') {
+    pool.sort((a,b) => b.avg - a.avg); // Ordena pela nota
+    
+    // Distribuição Cobra (Snake)
+    pool.forEach((s, i) => {
+       // Acha o grupo com a menor soma de médias atual
+       let bestG = 0;
+       let minSum = Infinity;
+       groups.forEach((g, idx) => {
+         const sum = g.reduce((acc, curr) => acc + curr.avg, 0);
+         if (sum < minSum && g.length < Math.ceil(pool.length/k)) { // Respeita limite aprox
+            minSum = sum;
+            bestG = idx;
+         }
+       });
+       groups[bestG].push(s);
+    });
   }
 
-  // Clona o array para não modificar o original
-  let pool = students.map(s => ({...s}));
-  let groups = Array.from({length: k}, () => []);
-
-  // --- SELETOR DE ALGORITMO ---
-
-  if (opts.balanceMode === 'grades') {
-    // 1. BASEADO EM NOTA (Snake Draft / Greedy)
-    // Ordena por nota (maior para menor)
-    pool.sort((a,b) => b.avg - a.avg);
-    
-    // Distribuição Cobra para equilibrar médias
-    const groupSums = new Array(k).fill(0);
-    
-    pool.forEach(student => {
-      // Encontra o grupo com a menor soma de notas atual
-      let minIdx = 0;
-      let minSum = Infinity;
-      for(let i=0; i<k; i++){
-        if(groupSums[i] < minSum) {
-          minSum = groupSums[i];
-          minIdx = i;
-        }
-      }
-      groups[minIdx].push(student);
-      groupSums[minIdx] += student.avg;
-    });
-
-  } else if (opts.balanceMode === 'gender') {
-    // 2. BASEADO EM GÊNERO
-    // Separa em dois buckets
+  // --- MODO 3: GÊNERO MISTO (Equilibrado) ---
+  else if (opts.algo === 'gender_het') {
     const boys = pool.filter(s => s.gender === 'M');
-    const girls = pool.filter(s => s.gender !== 'M'); // F ou outros
+    const girls = pool.filter(s => s.gender !== 'M');
     
-    // Embaralha ambos
-    boys.sort(() => Math.random() - 0.5);
-    girls.sort(() => Math.random() - 0.5);
-
+    // Distribui meninos circularmente
+    boys.forEach((s, i) => groups[i % k].push(s));
     // Distribui meninas circularmente
-    let gIdx = 0;
-    girls.forEach(s => {
-      groups[gIdx % k].push(s);
-      gIdx++;
-    });
+    girls.forEach((s, i) => groups[i % k].push(s));
+  }
 
-    // Distribui meninos circularmente (começando onde parou ou do zero)
-    let bIdx = 0;
-    boys.forEach(s => {
-      groups[bIdx % k].push(s);
-      bIdx++;
-    });
-
-  } else if (opts.balanceMode === 'rules' || opts.balanceMode === 'intentional') {
-    // 3. ALEATÓRIO COM EXCEÇÕES E PRÉ-DEFINIÇÕES (INTENCIONAL)
-    // Primeiro, processa os "Juntar" (Must Pair)
-    // Agrupa alunos que devem ficar juntos em "meta-alunos"
+  // --- MODO 5 e 6: REGRAS e HÍBRIDO (Avançado) ---
+  else if (opts.algo === 'rules' || opts.algo === 'grades_rules') {
     
-    let metaPool = [];
-    const processedIds = new Set();
-
-    pool.forEach(student => {
-      if (processedIds.has(student.id)) return;
-
-      // Verifica se tem par obrigatório
-      if (student.mustPair) {
-        const partner = pool.find(p => p.id === student.mustPair || p.name.toLowerCase() === student.mustPair);
-        if (partner && !processedIds.has(partner.id)) {
-          // Cria um "bloco" com os dois
-          metaPool.push([student, partner]);
-          processedIds.add(student.id);
-          processedIds.add(partner.id);
-        } else {
-          // Par não encontrado ou já processado, adiciona sozinho
-          metaPool.push([student]);
-          processedIds.add(student.id);
-        }
-      } else {
-        // Sem par obrigatório
-        metaPool.push([student]);
-        processedIds.add(student.id);
-      }
-    });
-
-    // Embaralha os blocos
-    metaPool.sort(() => Math.random() - 0.5);
-
-    // Distribui os blocos tentando respeitar "Evitar"
-    // Algoritmo simples: tenta colocar no primeiro grupo válido. Se não der, coloca no com menos gente.
+    // 1. Processar PARES (Must Pair) -> Cria "Blocos"
+    let blocks = [];
+    let processed = new Set();
     
-    metaPool.forEach(block => {
-      // Tenta encontrar um grupo onde ninguém tem conflito com os membros do bloco
-      let placed = false;
+    // Ordena pool por nota se for híbrido
+    if (opts.algo === 'grades_rules') {
+      pool.sort((a,b) => b.avg - a.avg);
+    } else {
+      pool.sort(() => Math.random() - 0.5); // Aleatório
+    }
+
+    pool.forEach(s => {
+      if (processed.has(s.id)) return;
       
-      // Ordena grupos por tamanho para preencher uniformemente
-      const groupIndices = Array.from({length: k}, (_, i) => i).sort((a,b) => groups[a].length - groups[b].length);
+      let block = [s];
+      processed.add(s.id);
+      
+      if (s.mustPair) {
+        // Busca o par
+        let partner = pool.find(p => p.name.toLowerCase().includes(s.mustPair) || p.id === s.mustPair);
+        if (partner && !processed.has(partner.id)) {
+          block.push(partner);
+          processed.add(partner.id);
+        }
+      }
+      blocks.push(block);
+    });
 
-      for (let idx of groupIndices) {
-        const targetGroup = groups[idx];
+    // 2. Distribuir Blocos respeitando EVITAR
+    // Se for híbrido, blocos com maiores médias primeiro
+    if (opts.algo === 'grades_rules') {
+      blocks.sort((a,b) => {
+        const avgA = a.reduce((sum, x)=>sum+x.avg,0)/a.length;
+        const avgB = b.reduce((sum, x)=>sum+x.avg,0)/b.length;
+        return avgB - avgA;
+      });
+    }
+
+    blocks.forEach(block => {
+      // Tenta achar um grupo válido
+      // Estratégia: Procura o grupo mais vazio (ou com menor média) que não tenha conflito
+      
+      // Ordena índices dos grupos por prioridade (ex: menor soma de notas ou menor tamanho)
+      let groupIndices = Array.from({length: k}, (_, i) => i);
+      
+      if (opts.algo === 'grades_rules') {
+        // Prioriza grupos com menor soma de notas
+        groupIndices.sort((a,b) => {
+          const sumA = groups[a].reduce((acc, x)=>acc+x.avg,0);
+          const sumB = groups[b].reduce((acc, x)=>acc+x.avg,0);
+          return sumA - sumB;
+        });
+      } else {
+        // Prioriza grupos menores (balanceamento de tamanho)
+        groupIndices.sort((a,b) => groups[a].length - groups[b].length);
+      }
+
+      let placed = false;
+
+      for (let gIdx of groupIndices) {
+        // Verifica conflito
         let conflict = false;
-
-        // Verifica conflitos (Evitar)
-        if (opts.balanceMode === 'rules') {
-            for (let member of targetGroup) {
-              for (let newcomer of block) {
-                if (member.avoid === newcomer.id || newcomer.avoid === member.id) {
-                  conflict = true; 
-                  break;
-                }
-              }
-              if (conflict) break;
+        const targetGroup = groups[gIdx];
+        
+        for (let member of targetGroup) {
+          for (let newcomer of block) {
+            // Verifica Evitar bidirecionalmente
+            if ((member.avoid && (member.avoid === newcomer.id || member.avoid === newcomer.name.toLowerCase())) ||
+                (newcomer.avoid && (newcomer.avoid === member.id || newcomer.avoid === member.name.toLowerCase()))) {
+              conflict = true;
+              break;
             }
+          }
+          if (conflict) break;
         }
 
         if (!conflict) {
-          block.forEach(s => targetGroup.push(s));
+          groups[gIdx].push(...block);
           placed = true;
           break;
         }
       }
 
-      // Se deu conflito em todos (caso difícil), força no grupo com menos pessoas
+      // Fallback: Se der conflito em todos, coloca no grupo menor (não tem jeito)
       if (!placed) {
+        // Re-ordena por tamanho puramente para evitar superlotar um grupo
+        groupIndices.sort((a,b) => groups[a].length - groups[b].length);
         groups[groupIndices[0]].push(...block);
       }
     });
-
-  } else {
-    // 4. ALEATÓRIO PURO (Padrão)
-    pool.sort(() => Math.random() - 0.5);
-    let idx = 0;
-    pool.forEach(s => {
-      groups[idx % k].push(s);
-      idx++;
-    });
   }
 
-  // --- ESTATÍSTICAS FINAIS ---
-  const allAverages = students.map(s => s.avg);
-  const classMean = Math.round(mean(allAverages)*100)/100;
-  const classStd = Math.round(stddev(allAverages)*100)/100;
+  // --- MODO 1: ALEATÓRIO PURO ---
+  else {
+    pool.sort(() => Math.random() - 0.5);
+    pool.forEach((s, i) => groups[i % k].push(s));
+  }
 
-  return { groups, stats: { classMean, classStd, total: n, numGroups: k } };
+  return groups;
 }
 
+/* --- INTERFACE E DOM --- */
 
-/* ---------------- UI HANDLERS ---------------- */
-
-const input = document.getElementById('inputStudents');
+const txtInput = document.getElementById('inputStudents');
 const btnGenerate = document.getElementById('btnGenerate');
-const resultArea = document.getElementById('resultArea');
-const statsArea = document.getElementById('statsArea');
-const performanceResult = document.getElementById('performanceResult');
-const btnPasteSample = document.getElementById('btnPasteSample');
-const btnClearList = document.getElementById('btnClearList');
-const btnExportCSV = document.getElementById('btnExportCSV');
+const divGroups = document.getElementById('groupsGrid');
+const divStats = document.getElementById('quickStats');
+const divAnalysis = document.getElementById('analysisContent');
 
-// Exemplo completo cobrindo todos os casos
-btnPasteSample.addEventListener('click', () => {
-  input.value = [
-    'Ana, F, , Bia, 9.0, 9.5',     // Deve juntar com Bia (Intencional)
-    'Bia, F, , Ana, 6.0, 5.5',      // Deve juntar com Ana
-    'Carlos, M, João, , 5.0, 4.0',  // Evita João
-    'João, M, Carlos, , 8.0, 8.5',  // Evita Carlos
-    'Pedro, M, , , 7.0, 7.5',       // Neutro
-    'Mariana, F, , , 8.5, 9.0',     // Neutro
-    'Lucas, M, , , 4.5, 5.0',       // Nota Baixa
-    'Fernanda, F, , , 9.5, 10.0',   // Nota Alta
-    'Ricardo, M, , , 6.0, 6.5',
-    'Julia, F, , , 7.5, 8.0',
-    'Roberto, M, , , 3.0, 4.0',
-    'Sofia, F, , , 9.0, 9.0'
-  ].join('\n');
+// Carregar Exemplo
+document.getElementById('btnPasteSample').addEventListener('click', () => {
+  txtInput.value = 
+`Ana, F, , Bia, 9.0, 9.5
+Bia, F, , Ana, 6.0, 5.5
+Carlos, M, João, , 5.0, 4.0
+João, M, Carlos, , 8.0, 8.5
+Pedro, M, , , 7.0, 7.5
+Mariana, F, , , 8.5, 9.0
+Lucas, M, , , 4.5, 5.0
+Fernanda, F, , , 9.5, 10.0
+Ricardo, M, , , 6.0, 6.5
+Julia, F, , , 7.5, 8.0
+Roberto, M, , , 3.0, 4.0
+Sofia, F, , , 9.0, 9.0`;
 });
 
-btnClearList.addEventListener('click', () => {
-  input.value = '';
-  resultArea.innerHTML = '';
-  statsArea.innerText = 'Aguardando geração...';
-  performanceResult.innerHTML = 'Nenhuma análise ainda.';
-});
+document.getElementById('btnClear').addEventListener('click', () => txtInput.value = '');
 
+// Botão Gerar
 btnGenerate.addEventListener('click', () => {
-  const raw = input.value;
-  const students = parseStudents(raw);
-  
-  if (students.length === 0) {
-    alert('Lista vazia ou formato inválido.');
-    return;
-  }
+  const students = parseStudents(txtInput.value);
+  if (!students.length) return alert("Insira dados válidos!");
 
-  const mode = document.getElementById('mode').value;
-  const value = parseInt(document.getElementById('value').value) || 3;
-  const balanceMode = document.getElementById('balanceMode').value;
+  // Configurações
+  const opts = {
+    mode: document.getElementById('mode').value,
+    value: parseInt(document.getElementById('value').value),
+    algo: document.getElementById('balanceMode').value
+  };
 
-  const result = generateGroups(students, { mode, value, balanceMode });
-  
-  renderUI(result.groups, result.stats);
-  renderAnalysis(students, result.stats);
-});
+  // Processa
+  const groups = generate(students, opts);
+  const stats = getStats(students);
 
-function renderUI(groups, stats) {
-  // Estatísticas Rápidas
-  statsArea.innerHTML = `
-    <strong>Média da Turma:</strong> ${stats.classMean} <br>
-    <strong>Desvio Padrão:</strong> ${stats.classStd} <br>
-    <small>Total: ${stats.total} alunos em ${stats.numGroups} grupos.</small>
+  // Renderiza Stats Básicos
+  divStats.style.display = 'block';
+  divStats.innerHTML = `
+    <strong>Média Geral da Turma:</strong> ${stats.mean} | 
+    <strong>Desvio Padrão:</strong> ${stats.stdDev} <br>
+    <small>Total: ${students.length} alunos em ${groups.length} grupos.</small>
   `;
 
-  // Renderizar Grupos
-  resultArea.innerHTML = '';
-  const grid = document.createElement('div');
-  grid.className = 'groups-grid';
-
+  // Renderiza Grupos
+  document.getElementById('resultSection').style.display = 'block';
+  divGroups.innerHTML = '';
+  
   groups.forEach((g, i) => {
-    const groupAvg = g.length ? (g.reduce((acc, s) => acc + s.avg, 0) / g.length) : 0;
+    const gAvg = g.length ? (g.reduce((a,b)=>a+b.avg,0)/g.length).toFixed(2) : '0';
     const card = document.createElement('div');
     card.className = 'group-card';
     
-    let studentsHtml = g.map(s => {
-      let genderBadge = '';
-      if(s.gender === 'M') genderBadge = '<span class="tag tag--m">M</span>';
-      if(s.gender === 'F') genderBadge = '<span class="tag tag--f">F</span>';
+    let listHtml = g.map(s => {
+      let badge = '';
+      if(s.gender === 'M') badge = '<span class="tag tag--m">M</span>';
+      if(s.gender === 'F') badge = '<span class="tag tag--f">F</span>';
       
-      const gradesHtml = s.grades.map(gr => `<span class="grade-pill">${gr}</span>`).join('');
+      let gradesHtml = s.grades.map(gr => `<span class="grade-pill">${gr}</span>`).join('');
       
-      return `<div style="margin-bottom:6px; padding-bottom:6px; border-bottom:1px dashed #eee;">
-                ${genderBadge} <strong>${s.name}</strong> (${s.avg})
-                <div style="margin-top:2px;">${gradesHtml}</div>
+      return `<div class="student-item">
+                ${badge} <strong>${s.name}</strong> (${s.avg}) ${gradesHtml}
               </div>`;
     }).join('');
 
     card.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h4 style="margin:0;">Grupo ${i + 1}</h4>
-        <span style="font-size:0.9rem; font-weight:bold; color:var(--primary);">Média: ${Math.round(groupAvg*100)/100}</span>
+      <div class="group-header">
+        <strong>Grupo ${i+1}</strong>
+        <span class="group-avg">Méd: ${gAvg}</span>
       </div>
-      <hr style="margin:8px 0;">
-      ${studentsHtml}
+      ${listHtml}
     `;
-    grid.appendChild(card);
+    divGroups.appendChild(card);
   });
 
-  resultArea.appendChild(grid);
-}
+  // Renderiza Análise (Foco de Intervenção)
+  renderAnalysis(students);
+});
 
-// Análise Avançada (Mantida da versão anterior)
-function renderAnalysis(students, stats) {
-  const priorityCount = 3;
-  const sorted = students.slice().sort((a,b) => a.avg - b.avg);
-  const priorities = sorted.slice(0, priorityCount);
-  const priorityMean = mean(priorities.map(s => s.avg));
+function renderAnalysis(students) {
+  if(!students[0].grades.length) return;
+  document.getElementById('analysisSection').style.display = 'block';
 
-  // Simulação da análise por avaliação (se houver notas)
-  let analysisHtml = '';
-  if (students[0].grades.length > 0) {
-     // Calcula média por coluna de nota
-     let worstAssessmentIdx = 0;
-     let maxGap = -1;
-     let priorityWorstAvg = 0;
-     let classWorstAvg = 0;
+  // Lógica: Pega os 3 piores alunos (Prioritários)
+  const sorted = [...students].sort((a,b) => a.avg - b.avg);
+  const bottom3 = sorted.slice(0, 3);
+  
+  // Descobre qual a pior prova DELES
+  let numExams = students[0].grades.length;
+  let worstExamIdx = -1;
+  let worstExamAvg = Infinity;
+  let classAvgAtWorst = 0;
 
-     const numGrades = students[0].grades.length;
-     for(let i=0; i<numGrades; i++) {
-        const pGrades = priorities.map(s => s.grades[i] || 0);
-        const cGrades = students.map(s => s.grades[i] || 0);
-        const pAvg = mean(pGrades);
-        const cAvg = mean(cGrades);
-        const gap = cAvg - pAvg;
+  for(let i=0; i<numExams; i++) {
+    // Média do grupo prioritário nesta prova
+    let sumP = 0; 
+    let countP = 0;
+    bottom3.forEach(s => {
+      if(s.grades[i] !== undefined) { sumP += s.grades[i]; countP++; }
+    });
+    let avgP = countP ? sumP/countP : 0;
 
-        if (gap > maxGap) {
-          maxGap = gap;
-          worstAssessmentIdx = i;
-          priorityWorstAvg = pAvg;
-          classWorstAvg = cAvg;
-        }
-     }
-
-     analysisHtml = `
-      <div class="row">
-        <div class="col" style="text-align:center;">
-           <strong>Foco de Intervenção:</strong> <br>
-           <span style="font-size:1.5rem; color:var(--danger);">Avaliação ${worstAssessmentIdx + 1}</span>
-           <p><small>O grupo prioritário teve média ${Math.round(priorityWorstAvg*100)/100}, contra ${Math.round(classWorstAvg*100)/100} da turma.</small></p>
-        </div>
-      </div>
-     `;
+    if (avgP < worstExamAvg) {
+      worstExamAvg = avgP;
+      worstExamIdx = i;
+      
+      // Calcula média da turma nessa prova para comparar
+      let sumC = 0; students.forEach(s => sumC += (s.grades[i]||0));
+      classAvgAtWorst = sumC / students.length;
+    }
   }
 
-  // Lista Prioritária
-  const listHtml = priorities.map(s => `<li>${s.name} (Méd: ${s.avg})</li>`).join('');
+  const gap = (classAvgAtWorst - worstExamAvg).toFixed(2);
 
-  performanceResult.innerHTML = `
-    ${analysisHtml}
-    <hr style="margin:12px 0; border:0; border-top:1px solid #eee;">
-    <strong>Alunos com maior necessidade de apoio:</strong>
-    <ul>${listHtml}</ul>
+  let html = `
+    <div class="analysis-box">
+      <div style="text-align: center;">
+        <p style="margin-bottom: 5px; font-weight: bold; color: #555;">Foco de Intervenção Sugerido</p>
+        <div class="highlight-red">Avaliação ${worstExamIdx + 1}</div>
+        <p style="font-size: 0.9rem; margin-top: 10px;">
+          Os alunos com maior dificuldade tiveram média <strong>${worstExamAvg.toFixed(2)}</strong> nesta avaliação.<br>
+          A média geral da turma foi <strong>${classAvgAtWorst.toFixed(2)}</strong> (Gap de ${gap}).
+        </p>
+      </div>
+      <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
+      <strong>Alunos Prioritários:</strong>
+      <ul style="margin-top: 5px; padding-left: 20px;">
+        ${bottom3.map(s => `<li>${s.name} (Méd: ${s.avg})</li>`).join('')}
+      </ul>
+    </div>
   `;
+  divAnalysis.innerHTML = html;
 }
 
-// Exportar CSV
-btnExportCSV.addEventListener('click', () => {
-   const raw = input.value;
-   if(!raw) return;
-   // Recalcula grupos atuais (poderia salvar em variavel global, mas ok para MVP)
-   // Para exportar simples, vamos apenas baixar o que está no input
-   const blob = new Blob([raw], {type:'text/csv;charset=utf-8;'});
-   const url = URL.createObjectURL(blob);
-   const a = document.createElement('a'); 
-   a.href = url; 
-   a.download = 'minha_turma.csv'; 
-   document.body.appendChild(a); 
-   a.click(); 
-   a.remove();
+// Export CSV Simples
+document.getElementById('btnExport').addEventListener('click', () => {
+  const data = document.getElementById('inputStudents').value;
+  const blob = new Blob([data], {type: 'text/csv'});
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('hidden', '');
+  a.setAttribute('href', url);
+  a.setAttribute('download', 'meus_grupos.csv');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 });
 
 </script>
