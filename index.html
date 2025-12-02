@@ -56,7 +56,7 @@
 <body>
 
 <header>
-  <h1>PedagoKit</h1>
+  <h1>PedagoKit v3.1</h1>
   <p>Gestor Inteligente: Notas, Gênero e Regras de Convivência</p>
 </header>
 
@@ -177,25 +177,7 @@ function generate(students, opts) {
     const boys = pool.filter(s => s.gender === 'M');
     const girls = pool.filter(s => s.gender !== 'M');
     
-    // Distribui Meninos nos primeiros grupos até encher ou acabar
-    let currentGroup = 0;
-    
-    // Função auxiliar para distribuir lista sequencialmente
-    const fillSequential = (list) => {
-      list.forEach(s => {
-        groups[currentGroup].push(s);
-        // Avança grupo se atingiu tamanho ideal (distribuição equilibrada) ou round-robin
-        // Para homogêneo simples, vamos usar Round-Robin mas restrito aos grupos
-        currentGroup = (currentGroup + 1) % k;
-      });
-    };
-    
-    // *Estratégia Melhorada*: Tentar encher grupos inteiros com um gênero
-    // Mas para MVP simples, vamos distribuir meninos nos grupos 0, 1... 
-    // e meninas nos grupos K, K-1... (inverso) para tentar segregar
-    
-    // Vamos usar uma estratégia de "Buckets": 
-    // Grupos de meninos e Grupos de meninas.
+    // Vamos usar uma estratégia de "Buckets"
     const kBoys = Math.round((boys.length / pool.length) * k) || 1;
     const kGirls = k - kBoys;
     
@@ -203,11 +185,9 @@ function generate(students, opts) {
     boys.forEach((s, i) => groups[i % kBoys].push(s));
     
     // Distribui meninas nos grupos restantes
-    // Se só tiver 1 tipo, vai tudo pro mesmo, ok.
     if (kGirls > 0) {
       girls.forEach((s, i) => groups[kBoys + (i % kGirls)].push(s));
     } else {
-      // Fallback se proporção der errado
       girls.forEach((s, i) => groups[i % k].push(s));
     }
 
@@ -219,12 +199,11 @@ function generate(students, opts) {
     
     // Distribuição Cobra (Snake)
     pool.forEach((s, i) => {
-       // Acha o grupo com a menor soma de médias atual
        let bestG = 0;
        let minSum = Infinity;
        groups.forEach((g, idx) => {
          const sum = g.reduce((acc, curr) => acc + curr.avg, 0);
-         if (sum < minSum && g.length < Math.ceil(pool.length/k)) { // Respeita limite aprox
+         if (sum < minSum && g.length < Math.ceil(pool.length/k)) { 
             minSum = sum;
             bestG = idx;
          }
@@ -238,9 +217,7 @@ function generate(students, opts) {
     const boys = pool.filter(s => s.gender === 'M');
     const girls = pool.filter(s => s.gender !== 'M');
     
-    // Distribui meninos circularmente
     boys.forEach((s, i) => groups[i % k].push(s));
-    // Distribui meninas circularmente
     girls.forEach((s, i) => groups[i % k].push(s));
   }
 
@@ -251,11 +228,10 @@ function generate(students, opts) {
     let blocks = [];
     let processed = new Set();
     
-    // Ordena pool por nota se for híbrido
     if (opts.algo === 'grades_rules') {
       pool.sort((a,b) => b.avg - a.avg);
     } else {
-      pool.sort(() => Math.random() - 0.5); // Aleatório
+      pool.sort(() => Math.random() - 0.5);
     }
 
     pool.forEach(s => {
@@ -265,7 +241,6 @@ function generate(students, opts) {
       processed.add(s.id);
       
       if (s.mustPair) {
-        // Busca o par
         let partner = pool.find(p => p.name.toLowerCase().includes(s.mustPair) || p.id === s.mustPair);
         if (partner && !processed.has(partner.id)) {
           block.push(partner);
@@ -276,7 +251,6 @@ function generate(students, opts) {
     });
 
     // 2. Distribuir Blocos respeitando EVITAR
-    // Se for híbrido, blocos com maiores médias primeiro
     if (opts.algo === 'grades_rules') {
       blocks.sort((a,b) => {
         const avgA = a.reduce((sum, x)=>sum+x.avg,0)/a.length;
@@ -286,34 +260,26 @@ function generate(students, opts) {
     }
 
     blocks.forEach(block => {
-      // Tenta achar um grupo válido
-      // Estratégia: Procura o grupo mais vazio (ou com menor média) que não tenha conflito
-      
-      // Ordena índices dos grupos por prioridade (ex: menor soma de notas ou menor tamanho)
       let groupIndices = Array.from({length: k}, (_, i) => i);
       
       if (opts.algo === 'grades_rules') {
-        // Prioriza grupos com menor soma de notas
         groupIndices.sort((a,b) => {
           const sumA = groups[a].reduce((acc, x)=>acc+x.avg,0);
           const sumB = groups[b].reduce((acc, x)=>acc+x.avg,0);
           return sumA - sumB;
         });
       } else {
-        // Prioriza grupos menores (balanceamento de tamanho)
         groupIndices.sort((a,b) => groups[a].length - groups[b].length);
       }
 
       let placed = false;
 
       for (let gIdx of groupIndices) {
-        // Verifica conflito
         let conflict = false;
         const targetGroup = groups[gIdx];
         
         for (let member of targetGroup) {
           for (let newcomer of block) {
-            // Verifica Evitar bidirecionalmente
             if ((member.avoid && (member.avoid === newcomer.id || member.avoid === newcomer.name.toLowerCase())) ||
                 (newcomer.avoid && (newcomer.avoid === member.id || newcomer.avoid === member.name.toLowerCase()))) {
               conflict = true;
@@ -330,9 +296,7 @@ function generate(students, opts) {
         }
       }
 
-      // Fallback: Se der conflito em todos, coloca no grupo menor (não tem jeito)
       if (!placed) {
-        // Re-ordena por tamanho puramente para evitar superlotar um grupo
         groupIndices.sort((a,b) => groups[a].length - groups[b].length);
         groups[groupIndices[0]].push(...block);
       }
@@ -380,18 +344,15 @@ btnGenerate.addEventListener('click', () => {
   const students = parseStudents(txtInput.value);
   if (!students.length) return alert("Insira dados válidos!");
 
-  // Configurações
   const opts = {
     mode: document.getElementById('mode').value,
     value: parseInt(document.getElementById('value').value),
     algo: document.getElementById('balanceMode').value
   };
 
-  // Processa
   const groups = generate(students, opts);
   const stats = getStats(students);
 
-  // Renderiza Stats Básicos
   divStats.style.display = 'block';
   divStats.innerHTML = `
     <strong>Média Geral da Turma:</strong> ${stats.mean} | 
@@ -399,7 +360,6 @@ btnGenerate.addEventListener('click', () => {
     <small>Total: ${students.length} alunos em ${groups.length} grupos.</small>
   `;
 
-  // Renderiza Grupos
   document.getElementById('resultSection').style.display = 'block';
   divGroups.innerHTML = '';
   
@@ -430,7 +390,6 @@ btnGenerate.addEventListener('click', () => {
     divGroups.appendChild(card);
   });
 
-  // Renderiza Análise (Foco de Intervenção)
   renderAnalysis(students);
 });
 
@@ -438,18 +397,15 @@ function renderAnalysis(students) {
   if(!students[0].grades.length) return;
   document.getElementById('analysisSection').style.display = 'block';
 
-  // Lógica: Pega os 3 piores alunos (Prioritários)
   const sorted = [...students].sort((a,b) => a.avg - b.avg);
   const bottom3 = sorted.slice(0, 3);
   
-  // Descobre qual a pior prova DELES
   let numExams = students[0].grades.length;
   let worstExamIdx = -1;
   let worstExamAvg = Infinity;
   let classAvgAtWorst = 0;
 
   for(let i=0; i<numExams; i++) {
-    // Média do grupo prioritário nesta prova
     let sumP = 0; 
     let countP = 0;
     bottom3.forEach(s => {
@@ -461,7 +417,6 @@ function renderAnalysis(students) {
       worstExamAvg = avgP;
       worstExamIdx = i;
       
-      // Calcula média da turma nessa prova para comparar
       let sumC = 0; students.forEach(s => sumC += (s.grades[i]||0));
       classAvgAtWorst = sumC / students.length;
     }
@@ -476,7 +431,7 @@ function renderAnalysis(students) {
         <div class="highlight-red">Avaliação ${worstExamIdx + 1}</div>
         <p style="font-size: 0.9rem; margin-top: 10px;">
           Os alunos com maior dificuldade tiveram média <strong>${worstExamAvg.toFixed(2)}</strong> nesta avaliação.<br>
-          A média geral da turma foi <strong>${classAvgAtWorst.toFixed(2)}</strong> (Gap de ${gap}).
+          A média da turma <strong>nesta avaliação</strong> foi <strong>${classAvgAtWorst.toFixed(2)}</strong> (Gap de ${gap}).
         </p>
       </div>
       <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
@@ -489,7 +444,6 @@ function renderAnalysis(students) {
   divAnalysis.innerHTML = html;
 }
 
-// Export CSV Simples
 document.getElementById('btnExport').addEventListener('click', () => {
   const data = document.getElementById('inputStudents').value;
   const blob = new Blob([data], {type: 'text/csv'});
