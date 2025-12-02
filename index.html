@@ -47,8 +47,17 @@
     .tag--f { background-color: #ec4899; } /* Rosa */
     .grade-pill { font-size: 0.75rem; background: #eee; padding: 1px 5px; border-radius: 4px; color: #555; }
     
+    /* ESTILOS DA NOVA ANÁLISE */
     .analysis-box { background: #f0f9ff; border-left: 5px solid var(--primary); padding: 16px; margin-top: 20px; }
-    .highlight-red { color: var(--danger); font-weight: bold; font-size: 1.2rem; }
+    .highlight-red { color: var(--danger); font-weight: bold; font-size: 1.4rem; margin: 10px 0; }
+    
+    /* Grid de detalhes das provas */
+    .exam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 20px; }
+    .exam-card { background: white; padding: 10px; border-radius: 6px; border: 1px solid #ddd; text-align: center; }
+    .exam-card.critical { border-color: var(--danger); background: #fff5f5; }
+    .exam-card h5 { margin: 0 0 5px 0; color: #555; }
+    .exam-stat { font-size: 0.9rem; }
+    .exam-stat strong { font-size: 1.1rem; }
     
     .helper-text { font-size: 0.85rem; color: #666; background: #f8f9fa; padding: 10px; border-radius: var(--radius); margin-top: 10px; }
   </style>
@@ -128,7 +137,6 @@
 <script>
 /* --- LÓGICA E ALGORITMOS --- */
 
-// 1. Parser (Transforma texto em objetos)
 function parseStudents(raw) {
   const lines = raw.split('\n').filter(l => l.trim());
   return lines.map(line => {
@@ -137,7 +145,7 @@ function parseStudents(raw) {
     const avg = grades.length ? grades.reduce((a,b)=>a+b,0)/grades.length : 0;
     
     return {
-      id: parts[0].toLowerCase(), // ID para busca
+      id: parts[0].toLowerCase(),
       name: parts[0],
       gender: parts[1] ? parts[1].toUpperCase().charAt(0) : '?',
       avoid: parts[2] ? parts[2].toLowerCase() : null,
@@ -148,7 +156,6 @@ function parseStudents(raw) {
   });
 }
 
-// 2. Estatísticas Simples
 function getStats(students) {
   const avgs = students.map(s => s.avg);
   const mean = avgs.reduce((a,b)=>a+b,0) / avgs.length;
@@ -156,48 +163,32 @@ function getStats(students) {
   return { mean: mean.toFixed(2), stdDev: Math.sqrt(variance).toFixed(2) };
 }
 
-// 3. Gerador Principal
 function generate(students, opts) {
-  // A. Define número de grupos (K)
   let k = opts.value;
   if (opts.mode === 'groupSize') {
-    // Correção do Bug de Tamanho: Math.ceil garante grupos suficientes
     k = Math.ceil(students.length / opts.value);
   }
   
-  // Inicializa grupos vazios
   let groups = Array.from({length: k}, () => []);
-  let pool = [...students]; // Cópia para não alterar original
+  let pool = [...students];
 
-  // B. Seleção de Algoritmo
-  
-  // --- MODO 4: GÊNERO HOMOGÊNEO (Novo) ---
   if (opts.algo === 'gender_hom') {
-    // Separa por gênero
     const boys = pool.filter(s => s.gender === 'M');
     const girls = pool.filter(s => s.gender !== 'M');
     
-    // Vamos usar uma estratégia de "Buckets"
     const kBoys = Math.round((boys.length / pool.length) * k) || 1;
     const kGirls = k - kBoys;
     
-    // Distribui meninos nos primeiros kBoys grupos
     boys.forEach((s, i) => groups[i % kBoys].push(s));
     
-    // Distribui meninas nos grupos restantes
     if (kGirls > 0) {
       girls.forEach((s, i) => groups[kBoys + (i % kGirls)].push(s));
     } else {
       girls.forEach((s, i) => groups[i % k].push(s));
     }
 
-  } 
-  
-  // --- MODO 2: NOTAS (Greedy / Snake) ---
-  else if (opts.algo === 'grades') {
-    pool.sort((a,b) => b.avg - a.avg); // Ordena pela nota
-    
-    // Distribuição Cobra (Snake)
+  } else if (opts.algo === 'grades') {
+    pool.sort((a,b) => b.avg - a.avg);
     pool.forEach((s, i) => {
        let bestG = 0;
        let minSum = Infinity;
@@ -210,21 +201,14 @@ function generate(students, opts) {
        });
        groups[bestG].push(s);
     });
-  }
 
-  // --- MODO 3: GÊNERO MISTO (Equilibrado) ---
-  else if (opts.algo === 'gender_het') {
+  } else if (opts.algo === 'gender_het') {
     const boys = pool.filter(s => s.gender === 'M');
     const girls = pool.filter(s => s.gender !== 'M');
-    
     boys.forEach((s, i) => groups[i % k].push(s));
     girls.forEach((s, i) => groups[i % k].push(s));
-  }
 
-  // --- MODO 5 e 6: REGRAS e HÍBRIDO (Avançado) ---
-  else if (opts.algo === 'rules' || opts.algo === 'grades_rules') {
-    
-    // 1. Processar PARES (Must Pair) -> Cria "Blocos"
+  } else if (opts.algo === 'rules' || opts.algo === 'grades_rules') {
     let blocks = [];
     let processed = new Set();
     
@@ -236,7 +220,6 @@ function generate(students, opts) {
 
     pool.forEach(s => {
       if (processed.has(s.id)) return;
-      
       let block = [s];
       processed.add(s.id);
       
@@ -250,7 +233,6 @@ function generate(students, opts) {
       blocks.push(block);
     });
 
-    // 2. Distribuir Blocos respeitando EVITAR
     if (opts.algo === 'grades_rules') {
       blocks.sort((a,b) => {
         const avgA = a.reduce((sum, x)=>sum+x.avg,0)/a.length;
@@ -261,7 +243,6 @@ function generate(students, opts) {
 
     blocks.forEach(block => {
       let groupIndices = Array.from({length: k}, (_, i) => i);
-      
       if (opts.algo === 'grades_rules') {
         groupIndices.sort((a,b) => {
           const sumA = groups[a].reduce((acc, x)=>acc+x.avg,0);
@@ -273,11 +254,9 @@ function generate(students, opts) {
       }
 
       let placed = false;
-
       for (let gIdx of groupIndices) {
         let conflict = false;
         const targetGroup = groups[gIdx];
-        
         for (let member of targetGroup) {
           for (let newcomer of block) {
             if ((member.avoid && (member.avoid === newcomer.id || member.avoid === newcomer.name.toLowerCase())) ||
@@ -288,27 +267,22 @@ function generate(students, opts) {
           }
           if (conflict) break;
         }
-
         if (!conflict) {
           groups[gIdx].push(...block);
           placed = true;
           break;
         }
       }
-
       if (!placed) {
         groupIndices.sort((a,b) => groups[a].length - groups[b].length);
         groups[groupIndices[0]].push(...block);
       }
     });
-  }
 
-  // --- MODO 1: ALEATÓRIO PURO ---
-  else {
+  } else {
     pool.sort(() => Math.random() - 0.5);
     pool.forEach((s, i) => groups[i % k].push(s));
   }
-
   return groups;
 }
 
@@ -320,7 +294,6 @@ const divGroups = document.getElementById('groupsGrid');
 const divStats = document.getElementById('quickStats');
 const divAnalysis = document.getElementById('analysisContent');
 
-// Carregar Exemplo
 document.getElementById('btnPasteSample').addEventListener('click', () => {
   txtInput.value = 
 `Ana, F, , Bia, 9.0, 9.5
@@ -339,7 +312,6 @@ Sofia, F, , , 9.0, 9.0`;
 
 document.getElementById('btnClear').addEventListener('click', () => txtInput.value = '');
 
-// Botão Gerar
 btnGenerate.addEventListener('click', () => {
   const students = parseStudents(txtInput.value);
   if (!students.length) return alert("Insira dados válidos!");
@@ -372,21 +344,11 @@ btnGenerate.addEventListener('click', () => {
       let badge = '';
       if(s.gender === 'M') badge = '<span class="tag tag--m">M</span>';
       if(s.gender === 'F') badge = '<span class="tag tag--f">F</span>';
-      
       let gradesHtml = s.grades.map(gr => `<span class="grade-pill">${gr}</span>`).join('');
-      
-      return `<div class="student-item">
-                ${badge} <strong>${s.name}</strong> (${s.avg}) ${gradesHtml}
-              </div>`;
+      return `<div class="student-item">${badge} <strong>${s.name}</strong> (${s.avg}) ${gradesHtml}</div>`;
     }).join('');
 
-    card.innerHTML = `
-      <div class="group-header">
-        <strong>Grupo ${i+1}</strong>
-        <span class="group-avg">Méd: ${gAvg}</span>
-      </div>
-      ${listHtml}
-    `;
+    card.innerHTML = `<div class="group-header"><strong>Grupo ${i+1}</strong><span class="group-avg">Méd: ${gAvg}</span></div>${listHtml}`;
     divGroups.appendChild(card);
   });
 
@@ -397,45 +359,80 @@ function renderAnalysis(students) {
   if(!students[0].grades.length) return;
   document.getElementById('analysisSection').style.display = 'block';
 
+  // 1. Identificar Prioritários (Bottom 3)
   const sorted = [...students].sort((a,b) => a.avg - b.avg);
   const bottom3 = sorted.slice(0, 3);
   
+  // 2. Analisar TODAS as provas
   let numExams = students[0].grades.length;
+  let examsData = [];
+  
   let worstExamIdx = -1;
   let worstExamAvg = Infinity;
   let classAvgAtWorst = 0;
 
   for(let i=0; i<numExams; i++) {
-    let sumP = 0; 
-    let countP = 0;
-    bottom3.forEach(s => {
-      if(s.grades[i] !== undefined) { sumP += s.grades[i]; countP++; }
-    });
+    // Média Prioritária nesta prova
+    let sumP = 0; let countP = 0;
+    bottom3.forEach(s => { if(s.grades[i] !== undefined) { sumP += s.grades[i]; countP++; } });
     let avgP = countP ? sumP/countP : 0;
+    
+    // Média Turma nesta prova
+    let sumC = 0; students.forEach(s => sumC += (s.grades[i]||0));
+    let avgC = sumC / students.length;
 
+    examsData.push({ id: i+1, avgP: avgP, avgC: avgC });
+
+    // Checar se é a pior
     if (avgP < worstExamAvg) {
       worstExamAvg = avgP;
       worstExamIdx = i;
-      
-      let sumC = 0; students.forEach(s => sumC += (s.grades[i]||0));
-      classAvgAtWorst = sumC / students.length;
+      classAvgAtWorst = avgC;
     }
   }
 
   const gap = (classAvgAtWorst - worstExamAvg).toFixed(2);
 
+  // 3. Montar HTML: Destaque Principal + Lista de Cards
+  let examsGridHtml = examsData.map(ex => {
+    let isCritical = (ex.id === worstExamIdx + 1);
+    let cssClass = isCritical ? 'exam-card critical' : 'exam-card';
+    let icon = isCritical ? '⚠️' : '📊';
+    
+    return `
+      <div class="${cssClass}">
+        <h5>${icon} Avaliação ${ex.id}</h5>
+        <div class="exam-stat" style="color:${isCritical ? 'var(--danger)' : '#333'}">
+          Prioritários: <strong>${ex.avgP.toFixed(2)}</strong>
+        </div>
+        <div class="exam-stat" style="font-size:0.8rem; color:#666;">
+          Turma: ${ex.avgC.toFixed(2)}
+        </div>
+      </div>
+    `;
+  }).join('');
+
   let html = `
     <div class="analysis-box">
       <div style="text-align: center;">
-        <p style="margin-bottom: 5px; font-weight: bold; color: #555;">Foco de Intervenção Sugerido</p>
+        <p style="margin-bottom: 5px; font-weight: bold; color: #555;">Foco de Intervenção Principal</p>
         <div class="highlight-red">Avaliação ${worstExamIdx + 1}</div>
         <p style="font-size: 0.9rem; margin-top: 10px;">
           Os alunos com maior dificuldade tiveram média <strong>${worstExamAvg.toFixed(2)}</strong> nesta avaliação.<br>
-          A média da turma <strong>nesta avaliação</strong> foi <strong>${classAvgAtWorst.toFixed(2)}</strong> (Gap de ${gap}).
+          A média da turma <strong>nesta avaliação</strong> foi <strong>${classAvgAtWorst.toFixed(2)}</strong>.
         </p>
       </div>
-      <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
-      <strong>Alunos Prioritários:</strong>
+
+      <hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;">
+      
+      <p style="font-weight: bold; margin-bottom:10px;">Raio-X de todas as Avaliações:</p>
+      <div class="exam-grid">
+        ${examsGridHtml}
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;">
+      
+      <strong>Alunos Prioritários (Base do Cálculo):</strong>
       <ul style="margin-top: 5px; padding-left: 20px;">
         ${bottom3.map(s => `<li>${s.name} (Méd: ${s.avg})</li>`).join('')}
       </ul>
