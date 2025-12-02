@@ -1,51 +1,43 @@
-# PedagoKit  pedagogical toolkit
+# PedagoKit — Gestor Inteligente de Grupos
 
-Um pacote de ferramentas pedagógicas para auxiliar professores no planejamento, execução e avaliação da aula, desenvolvido como um projeto MVP (Produto Mínimo Viável).
+O PedagoKit é uma ferramenta desenvolvida para resolver uma das tarefas logísticas mais chatas (e estratégicas) do professor: **criar grupos de trabalho eficientes**. 
+
+Diferente de sorteadores comuns, este projeto permite criar grupos com critérios pedagógicos reais, como equilibrar notas, misturar gêneros ou respeitar regras de convivência (quem não pode trabalhar junto).
 
 **Acesse a versão online:** [https://gl-gabriel-lincoln.github.io/PedagoKit/](https://gl-gabriel-lincoln.github.io/PedagoKit/)
 
 ---
 
-## ✨ Ferramentas Incluídas
+## 🎯 O Que a Ferramenta Faz?
 
-Este MVP contém 3 ferramentas principais focadas em resolver "dores" pedagógicas:
+Nesta versão, o foco é total na **Ferramenta de Diagnóstico e Agrupamento**. Ela cobre 5 casos de uso essenciais para a sala de aula:
 
-1.  **Diagnosticar Turma (Gerador de Grupos & Análise de Impacto):**
-    * Permite importar ou colar listas de alunos com notas (formato `Nome,nota1,nota2,...`).
-    * Gera grupos balanceados otimizando para que as médias dos grupos fiquem próximas à média da turma (usando um algoritmo *greedy*).
-    * **Análise de Impacto:** Identifica os alunos prioritários (menores médias) e aponta qual avaliação teve o pior desempenho *para esse grupo*, sugerindo o foco de intervenção com maior potencial matemático para elevar a média geral.
+1.  **Aleatórios (Quebra-gelo):**
+    * Mistura total da turma para atividades rápidas ou para integrar alunos que não se conhecem bem.
+2.  **Baseados em Nota (Tutoria por Pares):**
+    * Utiliza um algoritmo *Greedy* (Cobra) para garantir que todos os grupos tenham uma média de desempenho similar. Mistura alunos com facilidade e dificuldade para estimular a colaboração.
+3.  **Baseados em Gênero:**
+    * Distribui meninos e meninas equitativamente entre os grupos, evitando "o clube do bolinha" ou grupos segregados, ideal para dinâmicas sociais.
+4.  **Aleatórios com Exceções (Gestão de Conflito):**
+    * Você define quem **NÃO** pode ficar junto (coluna "Evitar"). O algoritmo monta os grupos respeitando essas restrições para evitar conversas paralelas ou brigas.
+5.  **Intencionais com Pré-definições:**
+    * Você define quem **DEVE** ficar junto (coluna "Juntar"). Ideal para quando você já tem duplas formadas e quer apenas completar os grupos, ou para garantir apoio a alunos com necessidades específicas.
 
-2.  **Planejar Aula (Estruturador 5E):**
-    * Recebe a duração total da aula, o tópico e o objetivo.
-    * O professor escolhe o foco da aula (Matéria Nova, Revisão/Prática, Avaliação).
-    * Sugere uma divisão do tempo da aula nas 5 etapas do modelo 5E (Engajar, Explorar, Explicar, Elaborar, Avaliar), adaptando os tempos e descrições ao foco escolhido e aos dados inseridos.
-
-3.  **Nivelar Perguntas (Taxonomia de Bloom):**
-    * Recebe o tópico da aula e um contexto de aplicação (opcional).
-    * O professor escolhe o objetivo cognitivo (Checagem Rápida, Gerar Discussão, Criar Desafio).
-    * Gera perguntas baseadas na Taxonomia de Bloom, adaptadas ao tópico e contexto, nos níveis cognitivos correspondentes ao objetivo (Lembrar/Entender, Aplicar/Analisar, Avaliar/Criar).
-
-## 🚀 Como Usar
-
-1.  Acesse o [site online](https://gl-gabriel-lincoln.github.io/PedagoKit/).
-2.  Use os links na barra de navegação para ir até a ferramenta desejada.
-3.  Preencha os campos e clique nos botões para gerar os resultados.
-4.  Na Ferramenta 1, você pode usar o botão "Exemplo" para preencher a lista de alunos rapidamente.
-
-## 🛠️ Tecnologias Utilizadas
-
-* HTML5 (Semântico e acessível)
-* CSS3 (Design moderno e responsivo, com variáveis CSS)
-* JavaScript (Vanilla JS, sem frameworks, para interatividade e lógica das ferramentas)
-* GitHub Pages (Hospedagem)
-
-## 🔮 Próximos Passos (Sugestões do MVP)
-
-* Desenvolvimento de um backend (ex: Node.js) para salvar turmas e históricos.
-* Autenticação de professores.
-* Integração com APIs (ex: Google Classroom) para importar turmas.
-* Dashboards visuais com gráficos (ex: Chart.js) para a análise da turma.
+Além disso, a ferramenta mantém a **Análise de Impacto**, mostrando onde a intervenção pedagógica é mais necessária com base nas notas da turma.
 
 ---
 
-*Projeto desenvolvido por Gabriel Lincoln.*
+## 📋 Como Usar (Novo Formato de Dados)
+
+Para que a mágica das "Regras" e "Gênero" aconteça, a lista de alunos aceita novas colunas opcionais.
+
+**Formato do CSV / Texto:**
+`Nome, Gênero, Evitar, Juntar, Nota1, Nota2...`
+
+**Exemplo de preenchimento:**
+```csv
+Ana, F, , Bia, 9.0, 9.5      (Ana é menina, deve ficar com a Bia)
+Bia, F, , Ana, 6.0, 5.5      (Bia é menina, deve ficar com a Ana)
+Carlos, M, João, , 5.0, 4.0  (Carlos evita o João)
+João, M, Carlos, , 8.0, 8.5  (João evita o Carlos)
+Pedro, M, , , 7.0, 7.5       (Pedro sem restrições)
